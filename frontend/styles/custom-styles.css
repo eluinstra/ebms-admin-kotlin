@@ -1,0 +1,12 @@
+html {
+  --material-background-color: #fff;
+  --material-secondary-background-color: #f5f5f5;
+  --material-body-text-color: #aaa;
+  --material-secondary-text-color: #bbb;
+  --material-disabled-text-color: #ccc;
+  --material-primary-text-color: #999;
+  --material-error-text-color: red;
+  --material-primary-color: #666;
+  --material-primary-contrast-color: #fff;
+  --material-error-color: red;
+}

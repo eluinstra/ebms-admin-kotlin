@@ -1,0 +1,23 @@
+.success {
+  background-color: #dff0d8;
+}
+
+.text-success {
+  color: #3c763d;
+}
+
+.warning {
+  background-color: #fcf8e3;
+}
+
+.text-warning {
+  color: #8a6d3b;
+}
+
+.danger {
+  background-color: #f2dede;
+}
+
+.text-danger {
+  color: #a94442;
+}

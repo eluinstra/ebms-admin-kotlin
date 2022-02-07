@@ -24,6 +24,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.exposed:exposed-core:0.37.3")
+	implementation("com.github.mvysny.karibudsl:karibu-dsl:1.1.1")
+	implementation("com.github.mvysny.kaributesting:karibu-testing-v10:1.3.10")
 	runtimeOnly("org.jetbrains.exposed:exposed-jdbc:0.37.3")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
