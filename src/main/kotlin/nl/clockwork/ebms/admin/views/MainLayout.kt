@@ -5,6 +5,7 @@ import com.github.mvysny.kaributools.navigateTo
 import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.RouterLayout
+import nl.clockwork.ebms.admin.views.cpa.CpasView
 
 
 @CssImport("./styles/custom-styles.css")
@@ -20,7 +21,7 @@ class MainLayout : KComposite(), RouterLayout {
                 menuBar {
                     item(getTranslation("home"), { _ -> navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
-                        item(getTranslation("cpas"))
+                        item(getTranslation("cpas"), { _ -> navigateTo(CpasView::class) })
                         item(getTranslation("urlMappings"))
                         item(getTranslation("certificateMappings"))
                     }

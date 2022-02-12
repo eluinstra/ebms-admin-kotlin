@@ -2,10 +2,11 @@ package nl.clockwork.ebms.admin
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import nl.clockwork.ebms.admin.TranslationProvider
+import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @SpringBootApplication(scanBasePackageClasses = [
 	TranslationProvider::class])
+@EnableTransactionManagement
 class EbmsAdminKotlinApplication
 
 fun main(args: Array<String>) {
