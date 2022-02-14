@@ -1,7 +1,7 @@
-package nl.clockwork.ebms.admin.dao
+package nl.clockwork.ebms.admin.dao.jdbc
 
+import nl.clockwork.ebms.admin.dao.EbMSDAO
 import nl.clockwork.ebms.dao.AbstractDAOFactory.DefaultDAOFactory
-import nl.clockwork.ebms.transaction.TransactionManagerConfig.TransactionManagerType
 import javax.sql.DataSource
 
 class EbMSDAOFactory(

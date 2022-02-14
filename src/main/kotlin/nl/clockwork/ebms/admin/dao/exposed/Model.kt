@@ -1,10 +1,8 @@
-package nl.clockwork.ebms.admin.dao
+package nl.clockwork.ebms.admin.dao.exposed
 
 import nl.clockwork.ebms.EbMSMessageStatus
 import nl.clockwork.ebms.delivery.task.DeliveryTaskStatus
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ForeignKeyConstraint
-import org.jetbrains.exposed.sql.Key
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob

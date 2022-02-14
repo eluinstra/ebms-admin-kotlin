@@ -1,4 +1,4 @@
-package nl.clockwork.ebms.admin.dao
+package nl.clockwork.ebms.admin.dao.exposed
 
 import nl.clockwork.ebms.admin.EbMSAttachment
 import org.jetbrains.exposed.sql.and

@@ -1,8 +1,9 @@
-package nl.clockwork.ebms.admin.dao
+package nl.clockwork.ebms.admin.dao.exposed
 
 import nl.clockwork.ebms.EbMSAction
 import nl.clockwork.ebms.EbMSMessageStatus
 import nl.clockwork.ebms.admin.*
+import nl.clockwork.ebms.admin.dao.EbMSDAO
 import nl.clockwork.ebms.admin.views.message.TimeUnit
 import nl.clockwork.ebms.service.model.Party
 import org.apache.commons.csv.CSVPrinter
