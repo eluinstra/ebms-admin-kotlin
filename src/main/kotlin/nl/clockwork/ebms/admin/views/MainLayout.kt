@@ -21,7 +21,7 @@ class MainLayout : KComposite(), RouterLayout {
                 menuBar {
                     item(getTranslation("home"), { _ -> navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
-                        item(getTranslation("cpas"), { _ -> navigateTo(CpasView::class) })
+                        item(getTranslation("cpas"))
                         item(getTranslation("urlMappings"))
                         item(getTranslation("certificateMappings"))
                     }
@@ -36,7 +36,7 @@ class MainLayout : KComposite(), RouterLayout {
                     item(getTranslation("advanced")) {
                         item(getTranslation("traffic"))
                         item(getTranslation("trafficChart"))
-                        item(getTranslation("cpas"))
+                        item(getTranslation("cpas"), { _ -> navigateTo(CpasView::class) })
                         item(getTranslation("messages"))
                     }
                     item(getTranslation("about"), { _ -> navigateTo(AboutView::class) })

@@ -38,12 +38,13 @@ abstract class AbstractEbMSDAO : EbMSDAO {
         Cpas.selectAll().map { it[Cpas.cpaId] }
 
     @Transactional("springTransactionManager")
-    override fun selectCPAs(first: Long, count: Long): List<Cpa> =
+    override fun selectCPAs(first: Long, count: Int): List<Cpa> =
         Cpas.selectAll()
-            .limit(count.toInt(), offset = first)
+            .limit(count, offset = first)
             .map { cpa(it) }
 
-    private fun cpa(row: ResultRow) = Cpa(row[Cpas.cpaId], row[Cpas.cpa])
+    private fun cpa(row: ResultRow) =
+        Cpa(row[Cpas.cpaId], row[Cpas.cpa])
 
     @Transactional("springTransactionManager")
     override fun findMessage(messageId: String): EbMSMessage? =

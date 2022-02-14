@@ -15,7 +15,7 @@ interface EbMSDAO {
     fun findCPA(cpaId: String): Cpa?
     fun countCPAs(): Long
     fun selectCPAIds(): List<String>
-    fun selectCPAs(first: Long, count: Long): List<Cpa>
+    fun selectCPAs(first: Long, count: Int): List<Cpa>
 
     fun findMessage(messageId: String): EbMSMessage?
     fun findMessage(messageId: String, messageNr: Int): EbMSMessage?
