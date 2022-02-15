@@ -10,19 +10,20 @@ import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 
 
-@Route(value = "cpa", layout = MainLayout::class)
+@Route(value = "cpa/:cpaId", layout = MainLayout::class)
 @PageTitle("CPA")
-class CpaView : KComposite(), HasUrlParameter<String>, WithBean {
-    private var root = ui {
+class CpaView : KComposite(), BeforeEnterObserver, WithBean {
+    private val root = ui {
         verticalLayout {
             h1(getTranslation("cpa"))
         }
     }
 
-    override fun setParameter(event: BeforeEvent?, cpaId: String?) {
+    override fun beforeEnter(event: BeforeEnterEvent?) {
+        val cpaId = event?.routeParameters?.get("cpaId")?.orElse(null)
         val cpa = cpaId?.let { ebMSAdminDAO?.findCPA(it) }
         with (root) {
-            cpa?.let { cpaForm(cpa) } ?: text("CPA not found")
+            cpa?.let { cpaForm(it) } ?: text("CPA not found")
             backButton(getTranslation("cmd.back"))
         }
     }
@@ -45,6 +46,6 @@ class CpaView : KComposite(), HasUrlParameter<String>, WithBean {
             ComponentRenderer { cpa -> cpaRouterLink(CpaView::class.java, cpa.cpaId) }
 
         private fun cpaRouterLink(cpaView: Class<CpaView>, cpaId: String): RouterLink =
-            RouterLink(cpaId, cpaView, cpaId)
+            RouterLink(cpaId, cpaView, RouteParameters("cpaId", cpaId))
     }
 }
