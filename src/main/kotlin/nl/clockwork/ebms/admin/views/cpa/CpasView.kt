@@ -4,16 +4,11 @@ import com.github.mvysny.karibudsl.v10.KComposite
 import com.github.mvysny.karibudsl.v10.grid
 import com.github.mvysny.karibudsl.v10.h1
 import com.github.mvysny.karibudsl.v10.verticalLayout
-import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.grid.Grid.SelectionMode
-import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.provider.Query
-import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.router.RouteConfiguration
-import com.vaadin.flow.router.RouterLink
 import nl.clockwork.ebms.admin.Cpa
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -27,12 +22,7 @@ class CpasView : KComposite(), WithBean {
             h1(getTranslation("cpas"))
             grid(cpaDataProvider()) {
                 setSelectionMode(SelectionMode.NONE)
-                addColumn(cpaLink()).setHeader(getTranslation("lbl.cpaId"))
-//                addItemClickListener { cpa -> navigateTo(CpaView::class, cpa.item.cpaId) }
-//                addColumn("cpaId").setHeader(getTranslation("lbl.cpaId"))
-//                addColumn(NativeButtonRenderer("Show") {
-//                    CpaView.navigateTo(it.cpaId)
-//                })
+                addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
             }
         }
     }
@@ -47,20 +37,4 @@ class CpasView : KComposite(), WithBean {
             },
             { ebMSAdminDAO?.countCPAs()?.toInt() ?: 0 }
         )
-
-    private fun cpaLink(): ComponentRenderer<RouterLink, Cpa> =
-        ComponentRenderer { cpa -> cpaRouterLink(cpa.cpaId, CpaView::class.java) }
-
-    private fun cpaRouterLink(cpaId: String, cpaView: Class<CpaView>): RouterLink =
-        RouterLink(cpaId, cpaView, cpaId)
-
-    private fun cpa(): ComponentRenderer<Text, Cpa> =
-        ComponentRenderer { cpa -> Text(cpa.cpaId) }
-
-    private fun cpaAnchor(): ComponentRenderer<Anchor, Cpa> =
-        ComponentRenderer { cpa ->
-            val route = RouteConfiguration.forSessionScope().getUrl(CpaView::class.java, cpa.cpaId)
-            Anchor(route, cpa.cpaId)
-        }
-
 }

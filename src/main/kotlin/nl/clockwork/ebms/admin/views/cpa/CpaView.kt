@@ -1,12 +1,9 @@
 package nl.clockwork.ebms.admin.views.cpa
 
 import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.kaributools.navigateTo
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.vaadin.flow.router.BeforeEvent
-import com.vaadin.flow.router.HasUrlParameter
-import com.vaadin.flow.router.PageTitle
-import com.vaadin.flow.router.Route
+import com.vaadin.flow.data.renderer.ComponentRenderer
+import com.vaadin.flow.router.*
 import nl.clockwork.ebms.admin.Cpa
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
@@ -44,6 +41,10 @@ class CpaView : KComposite(), HasUrlParameter<String>, WithBean {
         }
 
     companion object {
-        fun navigateTo(cpaId: String) = navigateTo(CpaView::class, cpaId)
+        fun cpaIdLink(): ComponentRenderer<RouterLink, Cpa> =
+            ComponentRenderer { cpa -> cpaRouterLink(CpaView::class.java, cpa.cpaId) }
+
+        private fun cpaRouterLink(cpaView: Class<CpaView>, cpaId: String): RouterLink =
+            RouterLink(cpaId, cpaView, cpaId)
     }
 }
