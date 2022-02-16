@@ -76,4 +76,8 @@ class EbMSMessageFilter(
     conversationId,
     messageId,
     refToMessageId
-)
+) {
+    companion object {
+        fun reset(): MessageFilter = EbMSMessageFilter()
+    }
+}

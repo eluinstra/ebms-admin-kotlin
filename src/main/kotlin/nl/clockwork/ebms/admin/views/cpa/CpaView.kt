@@ -21,7 +21,7 @@ class CpaView : KComposite(), BeforeEnterObserver, WithBean {
 
     override fun beforeEnter(event: BeforeEnterEvent?) {
         val cpaId = event?.routeParameters?.get("cpaId")?.orElse(null)
-        val cpa = cpaId?.let { ebMSAdminDAO?.findCPA(it) }
+        val cpa = cpaId?.let { ebMSAdminDAO!!.findCPA(it) }
         with (root) {
             cpa?.let { cpaForm(it) } ?: text("CPA not found")
             backButton(getTranslation("cmd.back"))

@@ -153,11 +153,12 @@ abstract class AbstractEbMSDAO : EbMSDAO {
 
     @Transactional("springTransactionManager")
     override fun countMessages(filter: EbMSMessageFilter): Long =
-        EbMSMessages.select { messageFilter(filter, Op.nullOp()) }.count()
+        EbMSMessages.selectAll()//TODO: use: { messageFilter(filter, Op.nullOp()) }
+            .count()
 
     @Transactional("springTransactionManager")
     override fun selectMessages(filter: EbMSMessageFilter, first: Long, count: Int): List<EbMSMessage> =
-        EbMSMessages.select { messageFilter(filter, Op.nullOp()) }
+        EbMSMessages.selectAll() //TODO: use: { messageFilter(filter, Op.nullOp()) }
             .orderBy(EbMSMessages.timestamp to SortOrder.DESC)
             .limit(count, first)
             .map { message(it) }
@@ -263,12 +264,11 @@ abstract class AbstractEbMSDAO : EbMSDAO {
         }
 
     @Transactional("springTransactionManager")
-    override fun writeMessageToZip(messageId: String, messageNr: Int, zip: ZipOutputStream) {
-        return EbMSMessages
+    override fun writeMessageToZip(messageId: String, messageNr: Int, zip: ZipOutputStream) =
+        EbMSMessages
             .slice(EbMSMessages.content)
             .select { EbMSMessages.messageId eq messageId and (EbMSMessages.messageNr eq messageNr) }
             .forEach { writeMessageContent(it, zip) }
-    }
 
     protected fun writeMessageContent(it: ResultRow, zip: ZipOutputStream) {
         val entry = ZipEntry("message.xml")

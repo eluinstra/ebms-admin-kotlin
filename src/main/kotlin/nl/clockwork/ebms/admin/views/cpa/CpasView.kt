@@ -30,11 +30,11 @@ class CpasView : KComposite(), WithBean {
     private fun cpaDataProvider(): DataProvider<Cpa, *> =
         DataProvider.fromCallbacks(
             { query: Query<Cpa, Void> ->
-                ebMSAdminDAO?.selectCPAs(
+                ebMSAdminDAO!!.selectCPAs(
                     query.offset.toLong(),
                     query.limit
-                )?.stream()
+                ).stream()
             },
-            { ebMSAdminDAO?.countCPAs()?.toInt() ?: 0 }
+            { ebMSAdminDAO!!.countCPAs().toInt() }
         )
 }
