@@ -7,6 +7,8 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.RouterLayout
 import nl.clockwork.ebms.admin.views.cpa.CpasView
 import nl.clockwork.ebms.admin.views.message.MessagesView
+import nl.clockwork.ebms.admin.views.message.TrafficChartView
+import nl.clockwork.ebms.admin.views.message.TrafficView
 
 
 @CssImport("./styles/custom-styles.css")
@@ -35,8 +37,8 @@ class MainLayout : KComposite(), RouterLayout {
                         item(getTranslation("messageStatus"))
                     }
                     item(getTranslation("advanced")) {
-                        item(getTranslation("traffic"))
-                        item(getTranslation("trafficChart"))
+                        item(getTranslation("traffic"), { _ -> navigateTo(TrafficView::class) })
+                        item(getTranslation("trafficChart"), { _ -> navigateTo(TrafficChartView::class) })
                         item(getTranslation("cpas"), { _ -> navigateTo(CpasView::class) })
                         item(getTranslation("messages"), { _ -> navigateTo(MessagesView::class) })
                     }

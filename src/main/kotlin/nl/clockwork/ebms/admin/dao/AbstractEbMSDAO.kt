@@ -218,11 +218,11 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             }
         }
         val result = EbMSMessages
-            .slice(getTimestamp(EbMSMessages.timestamp, timeUnit).alias("time"), EbMSMessages.messageId.count().alias("nr"))
+            .slice(getTimestamp(EbMSMessages.timestamp, timeUnit), EbMSMessages.messageId.count())
             .select(condition)
-            .groupBy(getTimestamp(EbMSMessages.timestamp, timeUnit).alias("time"))
+            .groupBy(getTimestamp(EbMSMessages.timestamp, timeUnit))
         return result.associate {
-            it[getTimestamp(EbMSMessages.timestamp, timeUnit).alias("time")] to it[EbMSMessages.messageId.count().alias("nr")].toInt()
+            it[getTimestamp(EbMSMessages.timestamp, timeUnit)] to it[EbMSMessages.messageId.count()].toInt()
         }
     }
 

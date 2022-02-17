@@ -16,7 +16,7 @@ interface WithBinder {
         return Binder(c)
     }
 
-    fun <T> createBinder(c: Class<T>?, o: T): Binder<T>? {
+    fun <T> createBinder(c: Class<T>?, o: T): Binder<T> {
         val binder = createBinder(c)
         binder.bean = o
         return binder

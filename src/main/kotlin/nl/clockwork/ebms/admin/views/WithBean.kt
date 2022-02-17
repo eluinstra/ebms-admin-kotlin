@@ -7,17 +7,19 @@ import org.springframework.web.context.support.WebApplicationContextUtils
 
 interface WithBean {
     val ebMSAdminDAO: EbMSDAO?
-        get() = get("ebMSAdminDAO", EbMSDAO::class.java)
+        get() = getBean("ebMSAdminDAO", EbMSDAO::class.java)
 
-    operator fun <T> get(beanType: Class<T>): T? {
-        return WebApplicationContextUtils
-            .getWebApplicationContext(VaadinServlet.getCurrent().servletContext)
-            ?.getBean(beanType)
-    }
+    companion object {
+        fun <T> getBean(beanType: Class<T>): T? {
+            return WebApplicationContextUtils
+                .getWebApplicationContext(VaadinServlet.getCurrent().servletContext)
+                ?.getBean(beanType)
+        }
 
-    operator fun <T> get(name: String, beanType: Class<T>): T? {
-        return WebApplicationContextUtils
-            .getWebApplicationContext(VaadinServlet.getCurrent().servletContext)
-            ?.getBean(name, beanType)
+        fun <T> getBean(name: String, beanType: Class<T>): T? {
+            return WebApplicationContextUtils
+                .getWebApplicationContext(VaadinServlet.getCurrent().servletContext)
+                ?.getBean(name, beanType)
+        }
     }
 }

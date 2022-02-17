@@ -10,6 +10,7 @@ import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAmount
+import java.time.temporal.TemporalUnit
 import java.util.function.Function
 
 
@@ -20,6 +21,7 @@ enum class TimeUnit(
     val units: String,
     val timeUnit: TemporalAmount,
     val period: TemporalAmount,
+    val unit: TemporalUnit,
     val dateFormatter: DateTimeFormatter,
     val timeUnitDateFormat: DateTimeFormatter,
     val resetTime: Function<LocalDateTime, LocalDateTime>,
@@ -27,6 +29,7 @@ enum class TimeUnit(
     HOUR("Minutes",
         Duration.ofMinutes(1),
         Duration.ofHours(1),
+        ChronoUnit.HOURS,
         DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"),
         DateTimeFormatter.ofPattern("mm"),
         Function { t: LocalDateTime ->
@@ -37,6 +40,7 @@ enum class TimeUnit(
     DAY("Hours",
         Duration.ofHours(1),
         Duration.ofDays(1),
+        ChronoUnit.DAYS,
         DateTimeFormatter.ofPattern("dd-MM-yyyy"),
         DateTimeFormatter.ofPattern("HH"),
         Function { t: LocalDateTime ->
@@ -49,6 +53,7 @@ enum class TimeUnit(
     MONTH("Days",
         Period.ofDays(1),
         Period.ofMonths(1),
+        ChronoUnit.MONTHS,
         DateTimeFormatter.ofPattern("MM-yyyy"),
         DateTimeFormatter.ofPattern("dd"),
         Function { t: LocalDateTime ->
@@ -59,6 +64,7 @@ enum class TimeUnit(
     YEAR("Months",
         Period.ofMonths(1),
         Period.ofYears(1),
+        ChronoUnit.YEARS,
         DateTimeFormatter.ofPattern("yyyy"),
         DateTimeFormatter.ofPattern("MM"),
         Function { t: LocalDateTime ->

@@ -14,6 +14,9 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
+	maven {
+		url = uri("https://maven.vaadin.com/vaadin-addons")
+	}
 }
 
 extra["vaadinVersion"] = "22.0.3"
@@ -35,6 +38,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.github.mvysny.karibudsl:karibu-dsl:1.1.1")
+	implementation("com.github.appreciated:apexcharts:2.0.0-beta13")
 	implementation("org.postgresql:postgresql:42.3.2")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
