@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
 	id("org.springframework.boot") version "2.6.3"
@@ -6,6 +7,7 @@ plugins {
 	id("com.vaadin") version "22.0.3"
 	kotlin("jvm") version "1.6.10"
 	kotlin("plugin.spring") version "1.6.10"
+	id("org.openapi.generator") version "5.3.1"
 }
 
 group = "nl.clockwork.ebms.admin"
@@ -19,7 +21,16 @@ repositories {
 	}
 }
 
-extra["vaadinVersion"] = "22.0.3"
+sourceSets {
+	main {
+		java {
+			srcDir("${buildDir}/generated-cpaClient/src/main/kotlin")
+			srcDir("${buildDir}/generated-urlMappingClient/src/main/kotlin")
+			srcDir("${buildDir}/generated-certificateMappingClient/src/main/kotlin")
+//			srcDir("${buildDir}/generated-ebMSClient/src/main/kotlin")
+		}
+	}
+}
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
@@ -37,6 +48,8 @@ dependencies {
 	}
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
+	implementation("com.squareup.okhttp3:okhttp:4.9.3")
 	implementation("com.github.mvysny.karibudsl:karibu-dsl:1.1.1")
 	implementation("com.github.appreciated:apexcharts:2.0.0-beta13")
 	implementation("org.postgresql:postgresql:42.3.2")
@@ -46,8 +59,39 @@ dependencies {
 
 dependencyManagement {
 	imports {
-		mavenBom("com.vaadin:vaadin-bom:${property("vaadinVersion")}")
+		mavenBom("com.vaadin:vaadin-bom:22.0.3")
 	}
+}
+
+tasks.register("generateCpaClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
+	generateApiClient(
+		apiSpecification = "src/main/resources/cpas.json",
+		apiOutputDir = project.layout.buildDirectory.dir("generated-cpaClient"),
+		apiPackage = "nl.clockwork.ebms.service.cpa"
+	)
+}
+
+tasks.register("generateUrlMappingClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
+	generateApiClient(
+		apiSpecification = "src/main/resources/urlMappings.json",
+		apiOutputDir = project.layout.buildDirectory.dir("generated-urlMappingClient"),
+		apiPackage = "nl.clockwork.ebms.service.mapping.url")
+}
+
+tasks.register("generateCertificateMappingClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
+	generateApiClient(
+		apiSpecification = "src/main/resources/certificateMappings.json",
+		apiOutputDir = project.layout.buildDirectory.dir("generated-certificateMappingClient"),
+		apiPackage = "nl.clockwork.ebms.service.mapping.certificate"
+	)
+}
+
+tasks.register("generateEbMSClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
+	generateApiClient(
+		apiSpecification = "src/main/resources/ebms.json",
+		apiOutputDir = project.layout.buildDirectory.dir("generated-ebMSClient"),
+		apiPackage = "nl.clockwork.ebms.service.ebms"
+	)
 }
 
 tasks.withType<KotlinCompile> {
@@ -55,8 +99,32 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "11"
 	}
+	dependsOn("generateCpaClient")
+	dependsOn("generateUrlMappingClient")
+	dependsOn("generateCertificateMappingClient")
+//	dependsOn("generateEbMSClient")
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+fun GenerateTask.generateApiClient(
+	apiSpecification: String,
+	apiOutputDir: Provider<Directory>,
+	apiPackage: String
+) {
+	input = project.file(apiSpecification).path
+	outputDir.set(apiOutputDir.get().toString())
+	modelPackage.set("$apiPackage.model")
+	this.apiPackage.set("$apiPackage.api")
+	invokerPackage.set("$apiPackage.invoker")
+	packageName.set(apiPackage)
+	generatorName.set("kotlin")
+	configOptions.set(
+		mapOf(
+			"dateLibrary" to "java8",
+			"library" to "multiplatform"
+		)
+	)
 }

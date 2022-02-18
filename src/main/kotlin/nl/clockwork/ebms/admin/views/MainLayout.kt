@@ -24,21 +24,21 @@ class MainLayout : KComposite(), RouterLayout {
                 menuBar {
                     item(getTranslation("home"), { _ -> navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
-                        item(getTranslation("cpas"))
-                        item(getTranslation("urlMappings"))
+                        item(getTranslation("cpas"))//.add(hr())
+                        item(getTranslation("urlMappings"))//.add(hr())
                         item(getTranslation("certificateMappings"))
                     }
                     item(getTranslation("messageService")) {
-                        item(getTranslation("ping"))
-                        item(getTranslation("unprocessedMessages"))
+                        item(getTranslation("ping"))//.separator()
+                        item(getTranslation("unprocessedMessages"))//.separator()
                         item(getTranslation("messageEvents"))
-                        item(getTranslation("messageSend"))
+                        item(getTranslation("messageSend"))//.separator()
                         item(getTranslation("messageResend"))
                         item(getTranslation("messageStatus"))
                     }
                     item(getTranslation("advanced")) {
                         item(getTranslation("traffic"), { _ -> navigateTo(TrafficView::class) })
-                        item(getTranslation("trafficChart"), { _ -> navigateTo(TrafficChartView::class) })
+                        item(getTranslation("trafficChart"), { _ -> navigateTo(TrafficChartView::class) })//.separator()
                         item(getTranslation("cpas"), { _ -> navigateTo(CpasView::class) })
                         item(getTranslation("messages"), { _ -> navigateTo(MessagesView::class) })
                     }
