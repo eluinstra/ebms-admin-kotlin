@@ -9,6 +9,7 @@ import nl.clockwork.ebms.admin.views.cpa.CpasView
 import nl.clockwork.ebms.admin.views.message.MessagesView
 import nl.clockwork.ebms.admin.views.message.TrafficChartView
 import nl.clockwork.ebms.admin.views.message.TrafficView
+import nl.clockwork.ebms.admin.views.service.cpa.CpasView as CpaServiceView
 
 
 @CssImport("./styles/custom-styles.css")
@@ -24,7 +25,7 @@ class MainLayout : KComposite(), RouterLayout {
                 menuBar {
                     item(getTranslation("home"), { _ -> navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
-                        item(getTranslation("cpas"))//.add(hr())
+                        item(getTranslation("cpas"), { _ -> navigateTo(CpaServiceView::class) })//.add(hr())
                         item(getTranslation("urlMappings"))//.add(hr())
                         item(getTranslation("certificateMappings"))
                     }
