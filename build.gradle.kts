@@ -24,10 +24,10 @@ repositories {
 sourceSets {
 	main {
 		java {
-			srcDir("${buildDir}/generated-cpaClient/src/main/kotlin")
-			srcDir("${buildDir}/generated-urlMappingClient/src/main/kotlin")
-			srcDir("${buildDir}/generated-certificateMappingClient/src/main/kotlin")
-//			srcDir("${buildDir}/generated-ebMSClient/src/main/kotlin")
+			srcDir("${buildDir}/generated-cpaClient/src/gen/java")
+			srcDir("${buildDir}/generated-urlMappingClient/src/gen/java")
+			srcDir("${buildDir}/generated-certificateMappingClient/src/gen/java")
+//			srcDir("${buildDir}/generated-ebMSClient/src/gen/java")
 		}
 	}
 }
@@ -48,10 +48,12 @@ dependencies {
 	}
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
-	implementation("com.squareup.okhttp3:okhttp:4.9.3")
 	implementation("com.github.mvysny.karibudsl:karibu-dsl:1.1.1")
 	implementation("com.github.appreciated:apexcharts:2.0.0-beta13")
+	implementation("org.apache.cxf:cxf-rt-rs-client:3.5.0")
+	implementation("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.13.1")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.1")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1")
 	implementation("org.postgresql:postgresql:42.3.2")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -99,9 +101,9 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "11"
 	}
-	dependsOn("generateCpaClient")
-	dependsOn("generateUrlMappingClient")
-	dependsOn("generateCertificateMappingClient")
+//	dependsOn("generateCpaClient")
+//	dependsOn("generateUrlMappingClient")
+//	dependsOn("generateCertificateMappingClient")
 //	dependsOn("generateEbMSClient")
 }
 
@@ -120,11 +122,12 @@ fun GenerateTask.generateApiClient(
 	this.apiPackage.set("$apiPackage.api")
 	invokerPackage.set("$apiPackage.invoker")
 	packageName.set(apiPackage)
-	generatorName.set("kotlin")
+	generatorName.set("jaxrs-cxf")
 	configOptions.set(
 		mapOf(
-			"dateLibrary" to "java8",
-			"library" to "multiplatform"
+			"interfaceOnly" to "true",
+			"useSwaggerAnnotations" to "false",
+			"dateLibrary" to "java8"
 		)
 	)
 }
