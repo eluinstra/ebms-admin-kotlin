@@ -75,7 +75,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
                 service = row[service],
                 action = row[action],
                 content = row[content],
-                status = row[status],
+                status = row[status]?.let { EbMSMessageStatus.get(it).orElse(null) },
                 statusTime = row[statusTime],
                 attachments = findAttachments(row[messageId].toString(), row[messageNr].toInt()),
                 deliveryTask = findDeliveryTask(row[messageId]),
@@ -99,7 +99,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
                 name = row[name],
                 contentId = row[contentId],
                 contentType = row[contentType],
-                content = row[content]?.let { cachedOutputStream(it.bytes) }
+                content = cachedOutputStream(row[content].bytes)
             )
         }
 
@@ -186,7 +186,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
                 EbMSMessages.cpaId eq cpaId and
                         (EbMSMessages.fromRole eq fromRole) and
                         (EbMSMessages.toRole eq toRole) and
-                        (EbMSMessages.status inList status.asList())}
+                        (EbMSMessages.status inList status.map { it.id })}
             .orderBy(EbMSMessages.timestamp to SortOrder.DESC)
             .map { it.toString() }
 
@@ -214,7 +214,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             else -> Op.build {
                 EbMSMessages.timestamp greaterEq from.atZone(ZoneId.systemDefault()).toInstant() and
                         (EbMSMessages.timestamp less to.atZone(ZoneId.systemDefault()).toInstant()) and
-                        (EbMSMessages.status inList status.asList())
+                        (EbMSMessages.status inList status.map { it.id })
             }
         }
         val result = EbMSMessages
@@ -228,7 +228,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
 
     @Transactional("springTransactionManager")
     override fun printMessagesToCSV(printer: CSVPrinter, filter: EbMSMessageFilter) {
-        EbMSMessages.select { messageFilter(filter, Op.nullOp()) }
+        EbMSMessages.selectAll() //TODO: use: { messageFilter(filter, Op.nullOp()) }
             .orderBy(EbMSMessages.timestamp to SortOrder.DESC)
             .forEach {
                 with(EbMSMessages) {
@@ -254,7 +254,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
         with(EbMSMessages) {
             var result = applyFilter(filter, condition)
             result = filter.messageNr?.let { result.and { messageNr eq it } } ?: result
-            result = if (filter.statuses.isNotEmpty()) result.and { status inList filter.statuses.toList() } else result
+            result = if (filter.statuses.isNotEmpty()) result.and { status inList filter.statuses.map { it.id }.toList() } else result
             result = filter.serviceMessage?.let {
                 if (it) result.and { service eq EbMSAction.EBMS_SERVICE_URI }
                 else result.and { service neq EbMSAction.EBMS_SERVICE_URI }
@@ -316,7 +316,10 @@ abstract class AbstractEbMSDAO : EbMSDAO {
                 result = filter.conversationId?.let { result.and(conversationId eq it) } ?: result
                 result = filter.messageId?.let { result.and(messageId eq it) } ?: result
                 result = filter.refToMessageId?.let { result.and(refToMessageId eq it) } ?: result
-                if (filter.statuses.isNotEmpty()) result.and(status inList filter.statuses.toList()) else result
+                if (filter.statuses.isNotEmpty())
+                    result.and(status inList filter.statuses.map { it.id }.toList())
+                else
+                    result
             }
         }
     }

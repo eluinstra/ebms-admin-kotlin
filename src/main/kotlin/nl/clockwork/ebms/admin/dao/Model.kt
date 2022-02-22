@@ -43,7 +43,7 @@ object EbMSMessages : Table("ebms_message") {
     val service: Column<String> = varchar("service", 256)
     val action: Column<String> = varchar("action", 256)
     val content: Column<String?> = text("content").nullable()
-    val status: Column<EbMSMessageStatus?> = enumeration("status", EbMSMessageStatus::class).nullable()
+    val status: Column<Int?> = integer("status").nullable()
     val statusTime: Column<Instant?> = timestamp("status_time").nullable()
     override val primaryKey = PrimaryKey(messageId, messageNr)
 }
@@ -65,7 +65,7 @@ object EbMSMessagesX : Table("ebms_message") {
     val service: Column<String> = varchar("service", 256)
     val action: Column<String> = varchar("action", 256)
     val content: Column<String?> = text("content").nullable()
-    val status: Column<EbMSMessageStatus?> = enumeration("status", EbMSMessageStatus::class).nullable()
+    val status: Column<Int?> = integer("status").nullable()
     val statusTime: Column<Instant?> = timestamp("status_time").nullable()
     override val primaryKey = PrimaryKey(id)
 }
@@ -77,7 +77,7 @@ object EbMSAttachments : Table("ebms_attachment") {
     val name: Column<String?> = varchar("name", 256).nullable()
     val contentId: Column<String> = varchar("content_id", 256)
     val contentType: Column<String> = varchar("content_type", 255)
-    val content: Column<ExposedBlob?> = blob("content").nullable()
+    val content: Column<ExposedBlob> = blob("content")
 }
 
 object EbMSAttachmentsX : Table("ebms_attachment") {

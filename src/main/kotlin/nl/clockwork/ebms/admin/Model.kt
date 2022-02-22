@@ -36,13 +36,13 @@ data class EbMSAttachment(
     val name: String?,
     val contentId: String,
     val contentType: String,
-    val content: CachedOutputStream?
+    val content: CachedOutputStream
 )
 
 data class DeliveryTask(
     val timeToLive: Instant,
     val timestamp: Instant,
-    val retries: Int?
+    val retries: Int
 )
 
 data class DeliveryLog(
