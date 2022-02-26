@@ -34,7 +34,7 @@ class CPAUploadView : KComposite(), WithBean, WithBinder {
             val uploadButton = createButton(getTranslation("cmd.upload"), 1) {
                 isEnabled = formData.cpaFile != null
                 addClickListener {
-                    formData.cpaFile?.let { cpaClient!!.insertCPA(formData.overwrite, String(it.readAllBytes())) }
+                    formData.cpaFile?.let { cpaClient.insertCPA(String(it.readAllBytes()), formData.overwrite) }
                 }
             }
             upload(memoryBuffer) {

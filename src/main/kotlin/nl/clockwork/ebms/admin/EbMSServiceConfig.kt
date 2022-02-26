@@ -1,7 +1,13 @@
 package nl.clockwork.ebms.admin
 
-import nl.clockwork.ebms.admin.views.service.cpa.CpaApiImpl
-import nl.clockwork.ebms.service.cpa.api.DefaultApi as CpaApi
+import nl.ordina.cpa._2_18.CPAService
+import nl.ordina.cpa._2_18.CPAService_Service
+import nl.ordina.cpa.certificatemapping._2_18.CertificateMappingService
+import nl.ordina.cpa.certificatemapping._2_18.CertificateMappingService_Service
+import nl.ordina.cpa.urlmapping._2_18.URLMappingService_Service
+import nl.ordina.cpa.urlmapping._2_18.UrlMappingService
+import nl.ordina.ebms._2_18.EbMSMessageService
+import nl.ordina.ebms._2_18.EbMSMessageService_Service
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,15 +16,15 @@ import org.springframework.context.annotation.Configuration
 class EbMSServiceConfig(
     @Value("\${service.cpas.baseUrl}") val basePath: String
 ) {
-    @Bean("cpaApi")
-    fun createCpaApi(): CpaApi =
-        CpaApiImpl(basePath)
+    @Bean("cpaService")
+    fun createCpaService() : CPAService = CPAService_Service().cpaPort
 
-//    @Bean("urlMappingApi")
-//    fun createUrlMappingApi(): UrlMappingApi =
-//        UrlMappingApiImpl(basePath)
-//
-//    @Bean("certificateMappingApi")
-//    fun createCertificateMappingApi(): CertificateMappingApi =
-//        CertificateMappingApiImpl(basePath)
+    @Bean("urlMappingService")
+    fun createUrlMappingService() : UrlMappingService = URLMappingService_Service().urlMappingPort
+
+    @Bean("certificateMappingService")
+    fun createCertificateMappingService() : CertificateMappingService = CertificateMappingService_Service().certificateMappingPort
+
+    @Bean("ebMSMessageService")
+    fun createEbMSMessageService() : EbMSMessageService = EbMSMessageService_Service().ebMSMessagePort
 }

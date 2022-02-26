@@ -3,8 +3,6 @@ package nl.clockwork.ebms.admin.views.service.cpa
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.refresh
 import com.github.mvysny.kaributools.setPrimary
-import com.vaadin.flow.component.Text
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Anchor
@@ -17,7 +15,6 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
-import nl.clockwork.ebms.admin.components.downloadButton
 import nl.clockwork.ebms.admin.components.downloadButton1
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -34,13 +31,13 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
                 addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
-//                addColumn(NativeButtonRenderer(getTranslation("cmd.download")) {
-//                    cpaClient!!.getCPA(it)
-//                })
+                addColumn(NativeButtonRenderer(getTranslation("cmd.download")) {
+                    cpaClient.getCPA(it)
+                })
                 addColumn(download())
                 addColumn(NativeButtonRenderer(getTranslation("cmd.delete")) {
                     confirmDialog {
-                        cpaClient!!.deleteCPA(it)
+                        cpaClient.deleteCPA(it)
                         //TODO: fix
                         this@grid.refresh()
                     }
@@ -50,7 +47,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
     }
 
     private fun download() : ComponentRenderer<Anchor, String> =
-        ComponentRenderer { cpaId -> downloadButton1(getTranslation("cmd.download"), createResource("$cpaId.xml", cpaClient!!.getCPA(cpaId))) }
+        ComponentRenderer { cpaId -> downloadButton1(getTranslation("cmd.download"), createResource("$cpaId.xml", cpaClient.getCPA(cpaId))) }
 
     private fun createResource(resourceName: String, cpa: String): StreamResource =
         StreamResource(resourceName, InputStreamFactory {
@@ -58,7 +55,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
         })
 
     private fun cpaDataProvider(): DataProvider<String, *> =
-        DataProvider.fromStream(cpaClient!!.getCPAIds().stream())
+        DataProvider.fromStream(cpaClient.cpaIds.stream())
 
     override fun afterNavigation(event: AfterNavigationEvent?) {
         grid.refresh()
@@ -72,7 +69,10 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
             text(text)
             horizontalLayout {
                 button("Yes") {
-                    onLeftClick { yesListener(); window.close() }
+                    onLeftClick {
+                        yesListener()
+                        window.close()
+                    }
                     setPrimary()
                 }
                 button("No") {

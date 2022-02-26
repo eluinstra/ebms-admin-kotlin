@@ -4,7 +4,6 @@ import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.*
-import nl.clockwork.ebms.admin.Cpa
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -19,7 +18,7 @@ class CpaView : KComposite(), BeforeEnterObserver, WithBean {
     }
     override fun beforeEnter(event: BeforeEnterEvent?) {
         val cpaId = event?.routeParameters?.get("cpaId")?.orElse(null)
-        val cpa = cpaId?.let { cpaClient!!.getCPA(it) }
+        val cpa = cpaId?.let { cpaClient.getCPA(it) }
         with (root) {
             cpa?.let { cpaForm(it) } ?: text("CPA not found")
             backButton(getTranslation("cmd.back"))
