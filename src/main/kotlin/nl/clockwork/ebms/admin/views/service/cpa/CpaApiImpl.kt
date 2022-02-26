@@ -5,31 +5,32 @@ import nl.clockwork.ebms.service.cpa.api.DefaultApi
 import javax.ws.rs.client.ClientBuilder
 import javax.ws.rs.client.Entity
 import javax.ws.rs.client.WebTarget
+import javax.ws.rs.core.MediaType
 
 
 class CpaApiImpl(
     private val basePath: String
 ) : DefaultApi {
     override fun deleteCPA(cpaId: String?) {
-        createTarget()
+        createTarget(basePath)
             .path("$cpaId")
             .request()
             .get()
     }
 
-    private fun createTarget(): WebTarget =
+    private fun createTarget(basePath: String): WebTarget =
         ClientBuilder.newClient()
             .register(JacksonJsonProvider())
             .target(basePath)
 
     override fun getCPA(cpaId: String?): String =
-        createTarget()
+        createTarget(basePath)
             .path("$cpaId")
             .request()
             .get(String::class.java)
 
     override fun getCPAIds(): MutableList<String> =
-        createTarget()
+        createTarget(basePath)
             .request()
             .get(MutableList::class.java) as MutableList<String>
 
@@ -38,16 +39,16 @@ class CpaApiImpl(
     }
 
     override fun insertCPA(overwrite: Boolean?, body: String?): String =
-        createTarget()
+        createTarget(basePath)
             .queryParam("overwrite", overwrite)
             .request()
-            .post(Entity.entity(body, "application/json"))
+            .post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE))
             .readEntity(String::class.java)
 
     override fun validateCPA(body: String?) {
-        createTarget()
+        createTarget(basePath)
             .request()
-            .post(Entity.entity(body, "application/json"))
+            .post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE))
 //            .readEntity(Unit::class.java)
     }
 }
