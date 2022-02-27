@@ -17,7 +17,6 @@ class AboutView : KComposite() {
             accordion {
                 setSizeFull()
                 versionsPanel()
-                propertiesPanel()
                 licensePanel()
             }
         }
@@ -26,7 +25,7 @@ class AboutView : KComposite() {
     private fun @VaadinDsl Accordion.versionsPanel() {
         panel {
             summary {
-                button { getTranslation("versions") }
+                button { text = getTranslation("versions") }
             }
             content {
                 verticalLayout {
@@ -37,25 +36,10 @@ class AboutView : KComposite() {
         }
     }
 
-    private fun @VaadinDsl Accordion.propertiesPanel() {
-        panel {
-            summary {
-                button { getTranslation("properties") }
-            }
-            content {
-                pre(
-                    """prop1=val1
-                    |prop2=val2
-                    |prop3=val3""".trimMargin()
-                )
-            }
-        }
-    }
-
     private fun @VaadinDsl Accordion.licensePanel() {
         panel {
             summary {
-                button { getTranslation("license") }
+                button { text = getTranslation("license") }
             }
             content {
                 pre(
