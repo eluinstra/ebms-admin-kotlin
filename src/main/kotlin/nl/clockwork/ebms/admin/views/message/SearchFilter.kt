@@ -13,6 +13,7 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.listbox.MultiSelectListBox
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.binder.BeanValidationBinder
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.provider.DataProvider
 import nl.clockwork.ebms.EbMSMessageStatus
@@ -20,7 +21,6 @@ import nl.clockwork.ebms.admin.EbMSMessage
 import nl.clockwork.ebms.admin.EbMSMessageFilter
 import nl.clockwork.ebms.admin.components.DateTimeSelect
 import nl.clockwork.ebms.admin.components.PartySelect
-import nl.clockwork.ebms.admin.components.WithBinder
 import nl.clockwork.ebms.admin.views.WithBean
 import nl.clockwork.ebms.jaxb.JAXBParser
 import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProtocolAgreement
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory
 import javax.xml.bind.JAXBException
 
 
-object SearchFilter : WithBean, WithBinder {
+object SearchFilter : WithBean {
     private val logger: Logger = LoggerFactory.getLogger(SearchFilter::class.java)
 
     fun HasComponents.searchFilter(
@@ -37,10 +37,11 @@ object SearchFilter : WithBean, WithBinder {
         dataProvider: DataProvider<EbMSMessage, *>,
         hideFilter: Runnable
     ) : FormLayout {
-        val binder: Binder<EbMSMessageFilter> = createBinder(EbMSMessageFilter::class.java)
+        val binder = beanValidationBinder<EbMSMessageFilter>()
         binder.readBean(messageFilter)
+        //TODO use binder
         return formLayout {
-            createComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO?.selectCPAIds() ?: emptyList(),2)
+            createComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO.selectCPAIds(),2)
             PartySelect(getTranslation("lbl.fromPartyId"), getTranslation("lbl.fromRole"),2)
             PartySelect(getTranslation("lbl.toPartyId"), getTranslation("lbl.toRole"),2)
             createComboBox(getTranslation("lbl.service"), emptyList(),1)

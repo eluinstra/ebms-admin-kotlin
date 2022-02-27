@@ -12,6 +12,7 @@ import com.github.appreciated.apexcharts.config.subtitle.Align
 import com.github.appreciated.apexcharts.config.xaxis.builder.TitleBuilder
 import com.github.appreciated.apexcharts.helper.Series
 import com.github.mvysny.karibudsl.v10.KComposite
+import com.github.mvysny.karibudsl.v10.beanValidationBinder
 import com.github.mvysny.karibudsl.v10.h1
 import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
@@ -27,7 +28,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import nl.clockwork.ebms.admin.components.WithBinder
 import nl.clockwork.ebms.admin.components.WithElement
 import nl.clockwork.ebms.admin.dao.EbMSDAO
 import nl.clockwork.ebms.admin.views.MainLayout
@@ -44,12 +44,14 @@ import java.util.stream.Stream
 class TrafficChartView(
     private val config: TrafficChartConfig = TrafficChartConfig.of(TimeUnit.DAY, EbMSMessageTrafficChartOption.ALL),
     private var chart: Component = updateApexCharts(createDefaultApexCharts(), config) //new Div()
-) : KComposite(), WithBean, WithBinder, WithElement {
+) : KComposite(), WithBean, WithElement {
     private val root = ui {
         verticalLayout {
             setSizeFull()
             h1(getTranslation("trafficChart"))
-            val binder = createBinder(TrafficChartConfig::class.java,config)
+            val binder = beanValidationBinder<TrafficChartConfig>()
+            binder.readBean(config)
+            //TODO use binder
             createDateBar(binder,config)
             chart
             createChartBar(binder,config)

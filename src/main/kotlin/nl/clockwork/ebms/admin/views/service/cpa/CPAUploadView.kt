@@ -7,10 +7,8 @@ import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
-import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import nl.clockwork.ebms.admin.components.WithBinder
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 import java.io.InputStream
@@ -18,7 +16,7 @@ import java.io.InputStream
 
 @Route(value = "service/cpaUpload", layout = MainLayout::class)
 @PageTitle("cpaUpload")
-class CPAUploadView : KComposite(), WithBean, WithBinder {
+class CPAUploadView : KComposite(), WithBean {
     private val formData = EditUploadFormData()
     private val root = ui {
         verticalLayout {
@@ -27,8 +25,9 @@ class CPAUploadView : KComposite(), WithBean, WithBinder {
     }
 
     private fun HasComponents.editUploadForm() : FormLayout {
-        val binder: Binder<EditUploadFormData> = createBinder(EditUploadFormData::class.java)
+        val binder = beanValidationBinder<EditUploadFormData>()
         binder.readBean(formData)
+        //TODO use binder
         val memoryBuffer = MemoryBuffer()
         return formLayout {
             val uploadButton = createButton(getTranslation("cmd.upload"), 1) {

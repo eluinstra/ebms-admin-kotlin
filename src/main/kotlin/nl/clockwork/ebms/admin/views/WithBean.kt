@@ -17,10 +17,10 @@ interface WithBean {
         get() = getBean("cpaService", CPAService::class.java)
 
     val urlMappingClient: UrlMappingService
-        get() = getBean("urlMappingApi", UrlMappingService::class.java)
+        get() = getBean("urlMappingService", UrlMappingService::class.java)
 
     val certificateMappingClient: CertificateMappingService
-        get() = getBean("certificateMappingApi", CertificateMappingService::class.java)
+        get() = getBean("certificateMappingService", CertificateMappingService::class.java)
 
     companion object {
         fun <T> getBean(beanType: Class<T>): T? =

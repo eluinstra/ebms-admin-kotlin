@@ -10,9 +10,10 @@ import nl.clockwork.ebms.admin.views.cpa.CpasView
 import nl.clockwork.ebms.admin.views.message.MessagesView
 import nl.clockwork.ebms.admin.views.message.TrafficChartView
 import nl.clockwork.ebms.admin.views.message.TrafficView
+import nl.clockwork.ebms.admin.views.service.cpa.UrlMappingsView
 import nl.clockwork.ebms.admin.views.service.cpa.CpasView as CpaServiceView
 
-@Viewport(Viewport.DEVICE_DIMENSIONS)
+//@Viewport(Viewport.DEVICE_DIMENSIONS)
 @CssImport("./styles/custom-styles.css")
 class MainLayout : KComposite(), RouterLayout {
     private val root = ui {
@@ -26,7 +27,7 @@ class MainLayout : KComposite(), RouterLayout {
                     item(getTranslation("home"), { _ -> navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
                         item(getTranslation("cpas"), { _ -> navigateTo(CpaServiceView::class) })//.add(hr())
-                        item(getTranslation("urlMappings"))//.add(hr())
+                        item(getTranslation("urlMappings"), { _ -> navigateTo(UrlMappingsView::class) })//.add(hr())
                         item(getTranslation("certificateMappings"))
                     }
                     item(getTranslation("messageService")) {

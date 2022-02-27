@@ -42,9 +42,9 @@ class CpaView : KComposite(), BeforeEnterObserver, WithBean {
 
     companion object {
         fun cpaIdLink(): ComponentRenderer<RouterLink, String> =
-            ComponentRenderer { cpaId -> cpaRouterLink(CpaView::class.java, cpaId) }
+            ComponentRenderer { cpaId -> cpaRouterLink(cpaId) }
 
-        private fun cpaRouterLink(cpaView: Class<CpaView>, cpaId: String): RouterLink =
-            RouterLink(cpaId, cpaView, RouteParameters("cpaId", cpaId))
+        private fun cpaRouterLink(cpaId: String): RouterLink =
+            RouterLink(cpaId, CpaView::class.java, RouteParameters("cpaId", cpaId))
     }
 }

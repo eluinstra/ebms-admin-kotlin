@@ -3,9 +3,7 @@ package nl.clockwork.ebms.admin.views.service.cpa
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.refresh
-import com.github.mvysny.kaributools.setPrimary
 import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.data.provider.DataProvider
@@ -17,6 +15,7 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
+import nl.clockwork.ebms.admin.components.confirmDialog
 import nl.clockwork.ebms.admin.components.downloadButton1
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -81,27 +80,5 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
 
     override fun afterNavigation(event: AfterNavigationEvent?) {
         grid.refresh()
-    }
-
-    private fun confirmDialog(text: String = getTranslation("confirm"), title: String? = null, yesListener: ()->Unit) {
-        val window = Dialog()
-        window.apply {
-            setSizeUndefined()
-            if (title != null) h2(title)
-            text(text)
-            horizontalLayout {
-                button(getTranslation("yes")) {
-                    onLeftClick {
-                        yesListener()
-                        window.close()
-                    }
-                    setPrimary()
-                }
-                button(getTranslation("no")) {
-                    onLeftClick { window.close() }
-                }
-            }
-        }
-        window.open()
     }
 }
