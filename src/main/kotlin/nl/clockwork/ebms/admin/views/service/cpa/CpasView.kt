@@ -1,8 +1,10 @@
 package nl.clockwork.ebms.admin.views.service.cpa
 
 import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.refresh
 import com.github.mvysny.kaributools.setPrimary
+import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Anchor
@@ -31,10 +33,8 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
                 addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
-                addColumn(NativeButtonRenderer(getTranslation("cmd.download")) {
-                    cpaClient.getCPA(it)
-                })
-                addColumn(download())
+                addColumn(download(getTranslation("cmd.download")))
+//                addColumn(delete(getTranslation("cmd.delete")))
                 addColumn(NativeButtonRenderer(getTranslation("cmd.delete")) {
                     confirmDialog {
                         cpaClient.deleteCPA(it)
@@ -43,39 +43,61 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                     }
                 })
             }
+            button {
+                text = getTranslation("cmd.new")
+                onLeftClick {
+                    navigateTo(CPAUploadView::class)
+                }
+            }
         }
     }
 
-    private fun download() : ComponentRenderer<Anchor, String> =
-        ComponentRenderer { cpaId -> downloadButton1(getTranslation("cmd.download"), createResource("$cpaId.xml", cpaClient.getCPA(cpaId))) }
+    private fun download(text: String): ComponentRenderer<Anchor, String> =
+        ComponentRenderer {
+            cpaId -> downloadButton1(text, createResource("${cpaId}.xml", cpaClient.getCPA(cpaId)))
+        }
 
     private fun createResource(resourceName: String, cpa: String): StreamResource =
         StreamResource(resourceName, InputStreamFactory {
             ByteArrayInputStream(cpa.toByteArray())
         })
 
-    private fun cpaDataProvider(): DataProvider<String, *> =
+    private fun delete(text: String) : ComponentRenderer<Anchor, String> =
+        ComponentRenderer {
+            cpaId -> Anchor("").apply {
+                add(Button(text))
+                this.element.addEventListener("click") {
+                    confirmDialog {
+                        cpaClient.deleteCPA(cpaId)
+                        //TODO: fix
+                        grid.refresh()
+                    }
+                }
+            }
+        }
+
+    private fun cpaDataProvider() : DataProvider<String, *> =
         DataProvider.fromStream(cpaClient.cpaIds.stream())
 
     override fun afterNavigation(event: AfterNavigationEvent?) {
         grid.refresh()
     }
 
-    private fun confirmDialog(text: String = "Are you sure?", title: String? = null, yesListener: ()->Unit) {
+    private fun confirmDialog(text: String = getTranslation("confirm"), title: String? = null, yesListener: ()->Unit) {
         val window = Dialog()
         window.apply {
             setSizeUndefined()
             if (title != null) h2(title)
             text(text)
             horizontalLayout {
-                button("Yes") {
+                button(getTranslation("yes")) {
                     onLeftClick {
                         yesListener()
                         window.close()
                     }
                     setPrimary()
                 }
-                button("No") {
+                button(getTranslation("no")) {
                     onLeftClick { window.close() }
                 }
             }

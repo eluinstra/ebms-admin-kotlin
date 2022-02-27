@@ -20,7 +20,7 @@ class CpaView : KComposite(), BeforeEnterObserver, WithBean {
         val cpaId = event?.routeParameters?.get("cpaId")?.orElse(null)
         val cpa = cpaId?.let { cpaClient.getCPA(it) }
         with (root) {
-            cpa?.let { cpaForm(it) } ?: text("CPA not found")
+            cpa?.let { cpaForm(it) } ?: text(getTranslation("cpaNotFound"))
             backButton(getTranslation("cmd.back"))
         }
     }
