@@ -11,6 +11,7 @@ import nl.clockwork.ebms.admin.views.message.MessagesView
 import nl.clockwork.ebms.admin.views.message.TrafficChartView
 import nl.clockwork.ebms.admin.views.message.TrafficView
 import nl.clockwork.ebms.admin.views.service.cpa.UrlMappingsView
+import nl.clockwork.ebms.admin.views.service.message.PingView
 import nl.clockwork.ebms.admin.views.service.cpa.CpasView as CpaServiceView
 
 //@Viewport(Viewport.DEVICE_DIMENSIONS)
@@ -24,14 +25,14 @@ class MainLayout : KComposite(), RouterLayout {
                     onLeftClick { navigateTo(HomeView::class) }
                 } //, getTranslation("home"))
                 menuBar {
-                    item(getTranslation("home"), { _ -> navigateTo(HomeView::class) })
+                    item(getTranslation("home"), { navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
-                        item(getTranslation("cpas"), { _ -> navigateTo(CpaServiceView::class) })//.add(hr())
-                        item(getTranslation("urlMappings"), { _ -> navigateTo(UrlMappingsView::class) })//.add(hr())
+                        item(getTranslation("cpas"), { navigateTo(CpaServiceView::class) })//.add(hr())
+                        item(getTranslation("urlMappings"), { navigateTo(UrlMappingsView::class) })//.add(hr())
                         item(getTranslation("certificateMappings"))
                     }
                     item(getTranslation("messageService")) {
-                        item(getTranslation("ping"))//.separator()
+                        item(getTranslation("ping"), { navigateTo(PingView::class) })//.separator()
                         item(getTranslation("unprocessedMessages"))//.separator()
                         item(getTranslation("messageEvents"))
                         item(getTranslation("messageSend"))//.separator()
@@ -39,12 +40,12 @@ class MainLayout : KComposite(), RouterLayout {
                         item(getTranslation("messageStatus"))
                     }
                     item(getTranslation("advanced")) {
-                        item(getTranslation("traffic"), { _ -> navigateTo(TrafficView::class) })
-                        item(getTranslation("trafficChart"), { _ -> navigateTo(TrafficChartView::class) })//.separator()
-                        item(getTranslation("cpas"), { _ -> navigateTo(CpasView::class) })
-                        item(getTranslation("messages"), { _ -> navigateTo(MessagesView::class) })
+                        item(getTranslation("traffic"), { navigateTo(TrafficView::class) })
+                        item(getTranslation("trafficChart"), { navigateTo(TrafficChartView::class) })//.separator()
+                        item(getTranslation("cpas"), { navigateTo(CpasView::class) })
+                        item(getTranslation("messages"), { navigateTo(MessagesView::class) })
                     }
-                    item(getTranslation("about"), { _ -> navigateTo(AboutView::class) })
+                    item(getTranslation("about"), { navigateTo(AboutView::class) })
                 }
             }
         }

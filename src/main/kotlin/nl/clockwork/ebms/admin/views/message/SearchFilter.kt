@@ -12,15 +12,14 @@ import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datetimepicker.DateTimePicker
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.listbox.MultiSelectListBox
-import com.vaadin.flow.component.textfield.TextField
-import com.vaadin.flow.data.binder.BeanValidationBinder
-import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.provider.DataProvider
 import nl.clockwork.ebms.EbMSMessageStatus
 import nl.clockwork.ebms.admin.EbMSMessage
 import nl.clockwork.ebms.admin.EbMSMessageFilter
 import nl.clockwork.ebms.admin.components.DateTimeSelect
 import nl.clockwork.ebms.admin.components.PartySelect
+import nl.clockwork.ebms.admin.components.aComboBox
+import nl.clockwork.ebms.admin.components.aTextField
 import nl.clockwork.ebms.admin.views.WithBean
 import nl.clockwork.ebms.jaxb.JAXBParser
 import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProtocolAgreement
@@ -41,14 +40,14 @@ object SearchFilter : WithBean {
         binder.readBean(messageFilter)
         //TODO use binder
         return formLayout {
-            createComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO.selectCPAIds(),2)
+            aComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO.selectCPAIds(),2)
             PartySelect(getTranslation("lbl.fromPartyId"), getTranslation("lbl.fromRole"),2)
             PartySelect(getTranslation("lbl.toPartyId"), getTranslation("lbl.toRole"),2)
-            createComboBox(getTranslation("lbl.service"), emptyList(),1)
-            createComboBox(getTranslation("lbl.action"), emptyList(),1)
-            createTextField(getTranslation("lbl.conversationId"),1)
-            createTextField(getTranslation("lbl.messageId"),1)
-            createTextField(getTranslation("lbl.refToMessageId"),1)
+            aComboBox(getTranslation("lbl.service"), emptyList(),1)
+            aComboBox(getTranslation("lbl.action"), emptyList(),1)
+            aTextField(getTranslation("lbl.conversationId"),1)
+            aTextField(getTranslation("lbl.messageId"),1)
+            aTextField(getTranslation("lbl.refToMessageId"),1)
             createStatuses(1)
 //            createDateTimePicker(getTranslation("lbl.from"),1)
             DateTimeSelect(getTranslation("lbl.fromDate"), getTranslation("lbl.fromTime"),1)
@@ -67,20 +66,6 @@ object SearchFilter : WithBean {
             }
         }
     }
-
-    private fun FormLayout.createComboBox(label: String, items: List<String>, colspan: Int): ComboBox<String> =
-        comboBox(label) {
-            setColspan(this, colspan)
-            setItems(items)
-            isClearButtonVisible = true
-            isEnabled = items != emptyList<Any>()
-        }
-
-    private fun FormLayout.createTextField(label: String, colspan: Int): TextField =
-        textField(label) {
-            setColspan(this, colspan)
-            isClearButtonVisible = true
-        }
 
     private fun FormLayout.createStatuses(colspan: Int): MultiSelectListBox<EbMSMessageStatus> =
         multiSelectListBox() {

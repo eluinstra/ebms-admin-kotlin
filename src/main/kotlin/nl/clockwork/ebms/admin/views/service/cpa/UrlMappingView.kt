@@ -28,7 +28,7 @@ class CreateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
 
     override fun beforeEnter(event: BeforeEnterEvent?) {
         with (root) {
-            urlMappingForm(binder, UrlMapping())
+            urlMappingForm(UrlMapping())
             horizontalLayout {
                 saveButton(getTranslation("cmd.set"))
                 backButton(getTranslation("cmd.back"))
@@ -36,7 +36,7 @@ class CreateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
         }
     }
 
-    private fun HasComponents.urlMappingForm(binder: BeanValidationBinder<UrlMapping>, urlMapping: UrlMapping) {
+    private fun HasComponents.urlMappingForm(urlMapping: UrlMapping) {
         formLayout {
             setSizeFull()
             label(getTranslation("lbl.urlMapping")) {
@@ -91,7 +91,7 @@ class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
         val sourceUrl = event?.routeParameters?.get("sourceUrl")?.map { u -> URLDecoder.decode(u) }?.orElse(null)
         val urlMapping = sourceUrl?.let { urlMappingClient.urlMappings.firstOrNull { it.source == sourceUrl } }
         with (root) {
-            urlMapping?.let { urlMappingForm(binder, it.toUrlMapping()) } ?: text(getTranslation("urlMappingNotFound"))
+            urlMapping?.let { urlMappingForm(it.toUrlMapping()) } ?: text(getTranslation("urlMappingNotFound"))
             horizontalLayout {
                 saveButton(getTranslation("cmd.set"))
                 backButton(getTranslation("cmd.back"))
@@ -102,7 +102,7 @@ class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
     private fun UrlMappingExt.toUrlMapping() =
         UrlMapping(source, destination)
 
-    private fun HasComponents.urlMappingForm(binder: BeanValidationBinder<UrlMapping>, urlMapping: UrlMapping) {
+    private fun HasComponents.urlMappingForm(urlMapping: UrlMapping) {
         binder.readBean(urlMapping)
         formLayout {
             setSizeFull()
