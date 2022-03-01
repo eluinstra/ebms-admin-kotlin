@@ -15,7 +15,6 @@ import nl.clockwork.ebms.admin.EbMSMessage
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
-import java.time.Instant
 
 
 @Route(value = "message/:messageId", layout = MainLayout::class)
@@ -29,7 +28,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
 
     override fun beforeEnter(event: BeforeEnterEvent?) {
         val messageId = event?.routeParameters?.get("messageId")?.orElse(null)
-        val message = messageId?.let { ebMSAdminDAO!!.findMessage(messageId) }
+        val message = messageId?.let { ebMSAdminDAO.findMessage(messageId) }
         with(root) {
             message?.let { messageForm(it) } ?: text("Message not found")
             backButton(getTranslation("cmd.back"))
@@ -40,48 +39,40 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
         formLayout {
             setSizeFull()
             with(message) {
-                createField(getTranslation("lbl.messageId"), messageId)
-                createField(getTranslation("lbl.messageNr"), messageNr.toString())
-                createField(getTranslation("lbl.conversationId"), conversationId)
-                createField(getTranslation("lbl.refToMessageId"), refToMessageId)
-                createField(getTranslation("lbl.timestamp"), timestamp)
-                createField(getTranslation("lbl.cpaId"), cpaId)
-                createField(getTranslation("lbl.fromPartyId"), fromPartyId)
-                createField(getTranslation("lbl.fromRole"), fromRole)
-                createField(getTranslation("lbl.toPartyId"), toPartyId)
-                createField(getTranslation("lbl.toRole"), toRole)
-                createField(getTranslation("lbl.service"), service)
-                createField(getTranslation("lbl.action"), action)
-                createField(getTranslation("lbl.status"), status?.name)
-                createField(getTranslation("lbl.statusTime"), statusTime)
-                message.deliveryTask?.let { createDeliveryTask(it) }
-                createDeliveryLogs(deliveryLogs)
-                createAttachments(attachments)
+                addFormItem(span(messageId), getTranslation("lbl.messageId"))
+                addFormItem(span(messageNr.toString()), getTranslation("lbl.messageNr"))
+                addFormItem(span(conversationId), getTranslation("lbl.conversationId"))
+                addFormItem(span(refToMessageId), getTranslation("lbl.refToMessageId"))
+                addFormItem(span(timestamp.toString()), getTranslation("lbl.timestamp"))
+                addFormItem(span(cpaId), getTranslation("lbl.cpaId"))
+                addFormItem(span(fromPartyId), getTranslation("lbl.fromPartyId"))
+                addFormItem(span(fromRole), getTranslation("lbl.fromRole"))
+                addFormItem(span(toPartyId), getTranslation("lbl.toPartyId"))
+                addFormItem(span(toRole), getTranslation("lbl.toRole"))
+                addFormItem(span(service), getTranslation("lbl.service"))
+                addFormItem(span(action), getTranslation("lbl.action"))
+                addFormItem(span(status?.name), getTranslation("lbl.status"))
+                addFormItem(span(statusTime.toString()), getTranslation("lbl.statusTime"))
+                message.deliveryTask?.let { deliveryTasks(it) }
+                deliveryLogs(deliveryLogs)
+                attachments(attachments)
             }
         }
 
-    private fun FormLayout.createField(label: String, value: Instant?): Component =
-        createField(label, value?.toString())
-
-    private fun FormLayout.createField(label: String, value: String?): Component =
-        horizontalLayout() {
-            setColspan(this, 2)
-            createLabel(label)
-            span(value)
-        }
-
-    private fun FormLayout.createLabel(label: String): Label =
+    private fun FormLayout.formLabel(label: String): Label =
         label(label) {
-            element.style.set("font-weight", "bold")
+            element.style.set("font-size", "14px")
+            element.style.set("font-weight", "400")
+            element.style.set("color", "#bbb")
         }
 
-    private fun FormLayout.createDeliveryTask(deliveryTask: DeliveryTask): Component =
+    private fun FormLayout.deliveryTasks(deliveryTask: DeliveryTask): Component =
         verticalLayout() {
-            createLabel(getTranslation("lbl.deliveryTasks"))
-            createDeliveryTaskTable(listOf(deliveryTask))
+            formLabel(getTranslation("lbl.deliveryTasks"))
+            deliveryTaskTable(listOf(deliveryTask))
         }
 
-    private fun FormLayout.createDeliveryTaskTable(deliveryTasks: List<DeliveryTask>): Component =
+    private fun FormLayout.deliveryTaskTable(deliveryTasks: List<DeliveryTask>): Component =
         Grid(DeliveryTask::class.java, false).apply {
             isAllRowsVisible = true
             setItems(deliveryTasks)
@@ -90,14 +81,14 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
             addColumn("retries").setHeader(getTranslation("lbl.retries"))
         }
 
-    private fun FormLayout.createDeliveryLogs(deliveryLogs: List<DeliveryLog>): Component =
+    private fun FormLayout.deliveryLogs(deliveryLogs: List<DeliveryLog>): Component =
         verticalLayout() {
             setColspan(this, 2) //
-            createLabel(getTranslation("lbl.deliveryLog"))
-            createDeliveryLogTable(deliveryLogs)
+            formLabel(getTranslation("lbl.deliveryLog"))
+            deliveryLogTable(deliveryLogs)
         }
 
-    private fun FormLayout.createDeliveryLogTable(deliveryLogs: List<DeliveryLog>): Component =
+    private fun FormLayout.deliveryLogTable(deliveryLogs: List<DeliveryLog>): Component =
         Grid(DeliveryLog::class.java, false).apply {
             isAllRowsVisible = true
             setItems(deliveryLogs)
@@ -107,14 +98,14 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
             //addColumn("errorMessage");
         }
 
-    private fun FormLayout.createAttachments(attachments: List<EbMSAttachment>): Component =
+    private fun FormLayout.attachments(attachments: List<EbMSAttachment>): Component =
         verticalLayout() {
             setColspan(this, 2) //
-            add(createLabel(getTranslation("lbl.attachments")))
-            add(createAttachmentsTable(attachments))
+            add(formLabel(getTranslation("lbl.attachments")))
+            add(attachmentsTable(attachments))
         }
 
-    private fun FormLayout.createAttachmentsTable(attachments: List<EbMSAttachment>): Component =
+    private fun FormLayout.attachmentsTable(attachments: List<EbMSAttachment>): Component =
         Grid<EbMSAttachment>(EbMSAttachment::class.java, false).apply {
             isAllRowsVisible = true
             setItems(attachments)
@@ -123,6 +114,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
             addColumn("contentType").setHeader(getTranslation("lbl.contentType"))
             //addColumn("content");
         }
+
     companion object {
         fun messageIdLink(): ComponentRenderer<RouterLink, EbMSMessage> =
             ComponentRenderer { message -> messageRouterLink(MessageView::class.java, message.messageId) }
