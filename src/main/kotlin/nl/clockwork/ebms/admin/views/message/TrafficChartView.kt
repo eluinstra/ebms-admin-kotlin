@@ -13,7 +13,7 @@ import com.github.appreciated.apexcharts.config.xaxis.builder.TitleBuilder
 import com.github.appreciated.apexcharts.helper.Series
 import com.github.mvysny.karibudsl.v10.KComposite
 import com.github.mvysny.karibudsl.v10.beanValidationBinder
-import com.github.mvysny.karibudsl.v10.h1
+import com.github.mvysny.karibudsl.v10.h2
 import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.ClickEvent
@@ -48,7 +48,7 @@ class TrafficChartView(
     private val root = ui {
         verticalLayout {
             setSizeFull()
-            h1(getTranslation("trafficChart"))
+            h2(getTranslation("trafficChart"))
             val binder = beanValidationBinder<TrafficChartConfig>()
             binder.readBean(config)
             //TODO use binder
@@ -228,7 +228,7 @@ class TrafficChartView(
         ): Array<Int> {
             val messageTraffic: Map<Int, Int> =
                 //TODO: fix
-                WithBean.getBean("ebMSAdminDAO", EbMSDAO::class.java)!!.selectMessageTraffic(config.from, config.to, config.timeUnit, *serie.ebMSMessageStatuses)
+                WithBean.getBean("ebMSAdminDAO", EbMSDAO::class.java).selectMessageTraffic(config.from, config.to, config.timeUnit, *serie.ebMSMessageStatuses)
             return dates.stream().map { date: String ->
                 messageTraffic[date.toInt()] ?: 0
             }.toArray { size -> arrayOfNulls(size) }

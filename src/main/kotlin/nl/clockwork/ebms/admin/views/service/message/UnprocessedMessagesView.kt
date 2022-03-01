@@ -16,7 +16,7 @@ class UnprocessedMessagesView : KComposite(), WithBean {
 
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("unprocessedMessages"))
+            h2(getTranslation("unprocessedMessages"))
             grid = grid(messageIdDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)

@@ -15,13 +15,13 @@ import nl.clockwork.ebms.admin.views.WithBean
 class CpaView : KComposite(), BeforeEnterObserver, WithBean {
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("cpa"))
+            h2(getTranslation("cpa"))
         }
     }
 
     override fun beforeEnter(event: BeforeEnterEvent?) {
         val cpaId = event?.routeParameters?.get("cpaId")?.orElse(null)
-        val cpa = cpaId?.let { ebMSAdminDAO!!.findCPA(it) }
+        val cpa = cpaId?.let { ebMSAdminDAO.findCPA(it) }
         with (root) {
             cpa?.let { cpaForm(it) } ?: text("CPA not found")
             backButton(getTranslation("cmd.back"))

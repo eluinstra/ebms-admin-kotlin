@@ -13,7 +13,7 @@ import nl.clockwork.ebms.admin.Utils.readVersion
 class AboutView : KComposite() {
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("about"))
+            h2(getTranslation("about"))
             accordion {
                 setSizeFull()
                 versionsPanel()

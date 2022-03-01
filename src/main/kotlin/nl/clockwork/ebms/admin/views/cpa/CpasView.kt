@@ -2,7 +2,7 @@ package nl.clockwork.ebms.admin.views.cpa
 
 import com.github.mvysny.karibudsl.v10.KComposite
 import com.github.mvysny.karibudsl.v10.grid
-import com.github.mvysny.karibudsl.v10.h1
+import com.github.mvysny.karibudsl.v10.h2
 import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.data.provider.DataProvider
@@ -19,7 +19,7 @@ import nl.clockwork.ebms.admin.views.WithBean
 class CpasView : KComposite(), WithBean {
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("cpas"))
+            h2(getTranslation("cpas"))
             grid(cpaDataProvider()) {
                 setSelectionMode(SelectionMode.NONE)
                 addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
@@ -30,11 +30,11 @@ class CpasView : KComposite(), WithBean {
     private fun cpaDataProvider(): DataProvider<Cpa, *> =
         DataProvider.fromCallbacks(
             { query: Query<Cpa, Void> ->
-                ebMSAdminDAO!!.selectCPAs(
+                ebMSAdminDAO.selectCPAs(
                     query.offset.toLong(),
                     query.limit
                 ).stream()
             },
-            { ebMSAdminDAO!!.countCPAs().toInt() }
+            { ebMSAdminDAO.countCPAs().toInt() }
         )
 }

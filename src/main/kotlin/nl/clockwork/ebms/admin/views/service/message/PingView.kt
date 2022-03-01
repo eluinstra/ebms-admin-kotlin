@@ -33,7 +33,7 @@ class PingView : KComposite(), WithBean {
 
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("ping"))
+            h2(getTranslation("ping"))
             pingForm()
         }
     }

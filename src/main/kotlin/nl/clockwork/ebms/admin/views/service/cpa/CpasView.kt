@@ -8,7 +8,6 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
-import com.vaadin.flow.data.renderer.NativeButtonRenderer
 import com.vaadin.flow.router.AfterNavigationEvent
 import com.vaadin.flow.router.AfterNavigationObserver
 import com.vaadin.flow.router.PageTitle
@@ -27,20 +26,13 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
     private lateinit var grid: Grid<String>
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("cpas"))
+            h2(getTranslation("cpas"))
             grid = grid(cpaDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
                 addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
                 addColumn(download(getTranslation("cmd.download")))
-//                addColumn(delete(getTranslation("cmd.delete")))
-                addColumn(NativeButtonRenderer(getTranslation("cmd.delete")) {
-                    confirmDialog {
-                        cpaClient.deleteCPA(it)
-                        //TODO: fix
-                        this@grid.refresh()
-                    }
-                })
+                addColumn(delete(getTranslation("cmd.delete")))
             }
             button {
                 text = getTranslation("cmd.new")
@@ -61,11 +53,10 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
             ByteArrayInputStream(cpa.toByteArray())
         })
 
-    private fun delete(text: String) : ComponentRenderer<Anchor, String> =
+    private fun delete(text: String) : ComponentRenderer<Button, String> =
         ComponentRenderer {
-            cpaId -> Anchor("").apply {
-                add(Button(text))
-                this.element.addEventListener("click") {
+            cpaId -> Button(text).apply {
+                addClickListener {
                     confirmDialog {
                         cpaClient.deleteCPA(cpaId)
                         //TODO: fix

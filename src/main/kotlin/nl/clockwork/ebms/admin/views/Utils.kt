@@ -37,9 +37,8 @@ object Utils {
             Status.getCssClass(it) { obj: Status -> obj.rowClass }
         } ?: ""
 
-    fun getErrorList(content: String): String {
-        return content.replaceFirst("(?ms)^.*(<[^<>]*:?ErrorList.*ErrorList>).*$".toRegex(), "$1")
-    }
+    fun getErrorList(content: String): String =
+        content.replaceFirst("(?ms)^.*(<[^<>]*:?ErrorList.*ErrorList>).*$".toRegex(), "$1")
 
     private enum class Status(
         val statuses: EnumSet<EbMSMessageStatus>,
@@ -51,7 +50,12 @@ object Utils {
             "success",
             "text-success"
         ),
-        WARNING(EnumSet.of(EbMSMessageStatus.RECEIVED, EbMSMessageStatus.CREATED), "warning", "text-warning"), DANGER(
+        WARNING(
+            EnumSet.of(EbMSMessageStatus.RECEIVED, EbMSMessageStatus.CREATED),
+            "warning",
+            "text-warning"
+        ),
+        DANGER(
             EnumSet.of(
                 EbMSMessageStatus.UNAUTHORIZED,
                 EbMSMessageStatus.NOT_RECOGNIZED,
@@ -67,7 +71,7 @@ object Utils {
             var getCssClass =
                 { status: EbMSMessageStatus, getClass: Function<Status, String> ->
                     Arrays.stream(values())
-                        .filter { it.statuses!!.contains(status) }
+                        .filter { it.statuses.contains(status) }
                         .map { getClass.apply(it) }
                         .findFirst()
                         .orElse(null)

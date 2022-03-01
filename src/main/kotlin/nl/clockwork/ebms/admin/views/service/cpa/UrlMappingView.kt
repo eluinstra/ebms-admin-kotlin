@@ -22,7 +22,7 @@ class CreateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
 
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("urlMapping"))
+            h2(getTranslation("urlMapping"))
         }
     }
 
@@ -83,7 +83,7 @@ class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
 
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("urlMapping"))
+            h2(getTranslation("urlMapping"))
         }
     }
 

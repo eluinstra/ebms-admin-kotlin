@@ -27,7 +27,7 @@ class TrafficView : KComposite(), WithBean, WithDate {
     private val root = ui {
         verticalLayout {
             setSizeFull()
-            h1(getTranslation("traffic"))
+            h2(getTranslation("traffic"))
             val messageFilter = EbMSMessageFilter(
                 messageNr = 0,
                 serviceMessage = false
@@ -41,13 +41,13 @@ class TrafficView : KComposite(), WithBean, WithDate {
     private fun createMessageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> {
         return DataProvider.fromCallbacks(
             { query: Query<EbMSMessage, Void> ->
-                ebMSAdminDAO!!.selectMessages(
+                ebMSAdminDAO.selectMessages(
                     messageFilter,
                     query.offset.toLong(),
                     query.limit
                 ).stream()
             },
-            { ebMSAdminDAO!!.countMessages(messageFilter).toInt()}
+            { ebMSAdminDAO.countMessages(messageFilter).toInt()}
         )
     }
 

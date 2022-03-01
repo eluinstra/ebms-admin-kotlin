@@ -13,7 +13,7 @@ import nl.clockwork.ebms.admin.views.WithBean
 class CpaView : KComposite(), BeforeEnterObserver, WithBean {
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("cpa"))
+            h2(getTranslation("cpa"))
         }
     }
     override fun beforeEnter(event: BeforeEnterEvent?) {

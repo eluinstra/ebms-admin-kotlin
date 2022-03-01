@@ -12,7 +12,7 @@ import com.vaadin.flow.router.RouteAlias
 class HomeView : KComposite() {
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("home"))
+            h2(getTranslation("home"))
             div {
                 text(getTranslation("home.message"))
             }

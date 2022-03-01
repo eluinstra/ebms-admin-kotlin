@@ -32,7 +32,7 @@ class MessagesView : KComposite(), WithBean, WithDate {
     val root = ui {
         verticalLayout {
             setSizeFull()
-            h1(getTranslation("messages"))
+            h2(getTranslation("messages"))
             val messageFilter = EbMSMessageFilter()
             val dataProvider = createMessageDataProvider(messageFilter)
             createSearchFilterDetails(getTranslation("messageFilter"), messageFilter, dataProvider)
@@ -44,13 +44,13 @@ class MessagesView : KComposite(), WithBean, WithDate {
     private fun createMessageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> =
         DataProvider.fromCallbacks(
             { query: Query<EbMSMessage, Void> ->
-                ebMSAdminDAO!!.selectMessages(
+                ebMSAdminDAO.selectMessages(
                     messageFilter,
                     query.offset.toLong(),
                     query.limit
                 ).stream()
             },
-            { ebMSAdminDAO!!.countMessages(messageFilter).toInt() }
+            { ebMSAdminDAO.countMessages(messageFilter).toInt() }
         )
 
     private fun HasComponents.createSearchFilterDetails(
@@ -104,7 +104,7 @@ class MessagesView : KComposite(), WithBean, WithDate {
         InputStreamFactory {
             CachedOutputStream().use { output ->
                 CSVPrinter(OutputStreamWriter(output), CSVFormat.DEFAULT).use { printer ->
-                    ebMSAdminDAO!!.printMessagesToCSV(printer, EbMSMessageFilter())
+                    ebMSAdminDAO.printMessagesToCSV(printer, EbMSMessageFilter())
                     output.inputStream
                 }
             }

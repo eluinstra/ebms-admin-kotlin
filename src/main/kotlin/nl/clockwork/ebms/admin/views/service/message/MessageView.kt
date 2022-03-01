@@ -10,7 +10,6 @@ import com.vaadin.flow.router.BeforeEnterEvent
 import com.vaadin.flow.router.BeforeEnterObserver
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import nl.clockwork.ebms.admin.EbMSAttachment
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -23,7 +22,7 @@ import nl.ordina.ebms._2.Message
 class MessageView : KComposite(), BeforeEnterObserver, WithBean {
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("message"))
+            h2(getTranslation("message"))
         }
     }
 
@@ -58,7 +57,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
 
     private fun FormLayout.dataSources(attachments: List<DataSource>): Component =
         verticalLayout() {
-            setColspan(this, 2) //
+            setColspan(this, 2)
             add(formLabel(getTranslation("lbl.attachments")))
             add(dataSourceTable(attachments))
         }

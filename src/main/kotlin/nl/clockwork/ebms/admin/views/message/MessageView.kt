@@ -22,7 +22,7 @@ import nl.clockwork.ebms.admin.views.WithBean
 class MessageView : KComposite(), BeforeEnterObserver, WithBean {
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("message"))
+            h2(getTranslation("message"))
         }
     }
 
