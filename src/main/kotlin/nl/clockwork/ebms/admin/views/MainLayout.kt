@@ -3,8 +3,6 @@ package nl.clockwork.ebms.admin.views
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.vaadin.flow.component.dependency.CssImport
-import com.vaadin.flow.component.page.Viewport
-import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.RouterLayout
 import nl.clockwork.ebms.admin.views.cpa.CpasView
 import nl.clockwork.ebms.admin.views.message.MessagesView
@@ -12,6 +10,7 @@ import nl.clockwork.ebms.admin.views.message.TrafficChartView
 import nl.clockwork.ebms.admin.views.message.TrafficView
 import nl.clockwork.ebms.admin.views.service.cpa.UrlMappingsView
 import nl.clockwork.ebms.admin.views.service.message.PingView
+import nl.clockwork.ebms.admin.views.service.message.UnprocessedMessagesView
 import nl.clockwork.ebms.admin.views.service.cpa.CpasView as CpaServiceView
 
 //@Viewport(Viewport.DEVICE_DIMENSIONS)
@@ -33,7 +32,7 @@ class MainLayout : KComposite(), RouterLayout {
                     }
                     item(getTranslation("messageService")) {
                         item(getTranslation("ping"), { navigateTo(PingView::class) })//.separator()
-                        item(getTranslation("unprocessedMessages"))//.separator()
+                        item(getTranslation("unprocessedMessages"), { navigateTo(UnprocessedMessagesView::class) })//.separator()
                         item(getTranslation("messageEvents"))
                         item(getTranslation("messageSend"))//.separator()
                         item(getTranslation("messageResend"))
