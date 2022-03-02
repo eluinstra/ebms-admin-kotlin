@@ -105,6 +105,7 @@ class MessagesView : KComposite(), WithBean, WithDate {
             CachedOutputStream().use { output ->
                 CSVPrinter(OutputStreamWriter(output), CSVFormat.DEFAULT).use { printer ->
                     ebMSAdminDAO.printMessagesToCSV(printer, EbMSMessageFilter())
+                    printer.flush()
                     output.inputStream
                 }
             }
