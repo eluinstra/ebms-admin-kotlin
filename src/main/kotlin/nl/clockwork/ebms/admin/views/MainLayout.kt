@@ -10,6 +10,7 @@ import nl.clockwork.ebms.admin.views.message.TrafficChartView
 import nl.clockwork.ebms.admin.views.message.TrafficView
 import nl.clockwork.ebms.admin.views.service.cpa.UrlMappingsView
 import nl.clockwork.ebms.admin.views.service.message.PingView
+import nl.clockwork.ebms.admin.views.service.message.SendMessageView
 import nl.clockwork.ebms.admin.views.service.message.UnprocessedMessagesView
 import nl.clockwork.ebms.admin.views.service.cpa.CpasView as CpaServiceView
 
@@ -33,8 +34,8 @@ class MainLayout : KComposite(), RouterLayout {
                     item(getTranslation("messageService")) {
                         item(getTranslation("ping"), { navigateTo(PingView::class) })//.separator()
                         item(getTranslation("unprocessedMessages"), { navigateTo(UnprocessedMessagesView::class) })//.separator()
-                        item(getTranslation("messageEvents"))
-                        item(getTranslation("messageSend"))//.separator()
+//                        item(getTranslation("messageEvents"))
+                        item(getTranslation("messageSend"), { navigateTo(SendMessageView::class) })//.separator()
                         item(getTranslation("messageResend"))
                         item(getTranslation("messageStatus"))
                     }
