@@ -10,6 +10,7 @@ import com.vaadin.flow.data.provider.Query
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.Cpa
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 
@@ -24,6 +25,7 @@ class CpasView : KComposite(), WithBean {
                 setSelectionMode(SelectionMode.NONE)
                 addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
             }
+            backButton(getTranslation("cmd.back"))
         }
     }
 

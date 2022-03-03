@@ -14,6 +14,7 @@ import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.EbMSMessage
 import nl.clockwork.ebms.admin.EbMSMessageFilter
 import nl.clockwork.ebms.admin.components.WithDate
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.Utils
 import nl.clockwork.ebms.admin.views.WithBean
@@ -35,6 +36,7 @@ class TrafficView : KComposite(), WithBean, WithDate {
             val dataProvider = createMessageDataProvider(messageFilter)
             createSearchFilterDetails(getTranslation("messageFilter"),messageFilter,dataProvider)
             createMessageGrid(dataProvider)
+            backButton(getTranslation("cmd.back"))
         }
     }
 

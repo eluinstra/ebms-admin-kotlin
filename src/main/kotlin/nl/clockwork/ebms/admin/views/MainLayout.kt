@@ -2,6 +2,7 @@ package nl.clockwork.ebms.admin.views
 
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
+import com.vaadin.flow.component.contextmenu.MenuItem
 import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.router.RouterLayout
 import nl.clockwork.ebms.admin.views.cpa.CpasView
@@ -27,21 +28,27 @@ class MainLayout : KComposite(), RouterLayout {
                 menuBar {
                     item(getTranslation("home"), { navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
-                        item(getTranslation("cpas"), { navigateTo(CpaServiceView::class) })//.add(hr())
-                        item(getTranslation("urlMappings"), { navigateTo(UrlMappingsView::class) })//.add(hr())
+                        item(getTranslation("cpas"), { navigateTo(CpaServiceView::class) })
+                        separator()
+                        item(getTranslation("urlMappings"), { navigateTo(UrlMappingsView::class) })
+                        separator()
                         item(getTranslation("certificateMappings"))
                     }
                     item(getTranslation("messageService")) {
-                        item(getTranslation("ping"), { navigateTo(PingView::class) })//.separator()
-                        item(getTranslation("unprocessedMessages"), { navigateTo(UnprocessedMessagesView::class) })//.separator()
+                        item(getTranslation("ping"), { navigateTo(PingView::class) })
+                        separator()
+                        item(getTranslation("unprocessedMessages"), { navigateTo(UnprocessedMessagesView::class) })
+                        separator()
 //                        item(getTranslation("messageEvents"))
-                        item(getTranslation("messageSend"), { navigateTo(SendMessageView::class) })//.separator()
+                        item(getTranslation("messageSend"), { navigateTo(SendMessageView::class) })
                         item(getTranslation("messageResend"))
+                        separator()
                         item(getTranslation("messageStatus"))
                     }
                     item(getTranslation("advanced")) {
                         item(getTranslation("traffic"), { navigateTo(TrafficView::class) })
-                        item(getTranslation("trafficChart"), { navigateTo(TrafficChartView::class) })//.separator()
+                        item(getTranslation("trafficChart"), { navigateTo(TrafficChartView::class) })
+                        separator()
                         item(getTranslation("cpas"), { navigateTo(CpasView::class) })
                         item(getTranslation("messages"), { navigateTo(MessagesView::class) })
                     }
@@ -49,5 +56,9 @@ class MainLayout : KComposite(), RouterLayout {
                 }
             }
         }
+    }
+
+    private fun @VaadinDsl MenuItem.separator() {
+        item(hr()).isEnabled = false
     }
 }

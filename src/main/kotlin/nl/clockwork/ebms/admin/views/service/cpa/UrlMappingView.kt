@@ -30,8 +30,8 @@ class CreateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
         with (root) {
             urlMappingForm(UrlMapping())
             horizontalLayout {
-                saveButton(getTranslation("cmd.set"))
                 backButton(getTranslation("cmd.back"))
+                saveButton(getTranslation("cmd.set"))
             }
         }
     }

@@ -16,6 +16,7 @@ import nl.clockwork.ebms.admin.EbMSMessage
 import nl.clockwork.ebms.admin.EbMSMessageFilter
 import nl.clockwork.ebms.admin.components.WithDate
 import nl.clockwork.ebms.admin.components.WithDate.Companion.DISPLAY_DATE_TIME_FORMATTER
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.downloadButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -37,7 +38,10 @@ class MessagesView : KComposite(), WithBean, WithDate {
             val dataProvider = createMessageDataProvider(messageFilter)
             createSearchFilterDetails(getTranslation("messageFilter"), messageFilter, dataProvider)
             createMessageGrid(dataProvider)
-            downloadButton(getTranslation("cmd.download"), StreamResource("messages.csv", createCsv()))
+            horizontalLayout {
+                backButton(getTranslation("cmd.back"))
+                downloadButton(getTranslation("cmd.download"), StreamResource("messages.csv", createCsv()))
+            }
         }
     }
 

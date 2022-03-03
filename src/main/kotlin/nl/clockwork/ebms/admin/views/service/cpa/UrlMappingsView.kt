@@ -9,6 +9,7 @@ import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.confirmDialog
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -29,10 +30,13 @@ class UrlMappingsView : KComposite(), WithBean {
                 addColumn("destination")
                 addColumn(delete(getTranslation("cmd.delete")))
             }
-            button {
-                text = getTranslation("cmd.new")
-                onLeftClick {
-                    navigateTo(CreateUrlMappingView::class)
+            horizontalLayout {
+                backButton(getTranslation("cmd.back"))
+                button {
+                    text = getTranslation("cmd.new")
+                    onLeftClick {
+                        navigateTo(CreateUrlMappingView::class)
+                    }
                 }
             }
         }

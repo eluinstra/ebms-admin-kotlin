@@ -7,6 +7,7 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.downloadButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -28,7 +29,10 @@ class UnprocessedMessagesView : KComposite(), WithBean {
                 setSelectionMode(Grid.SelectionMode.NONE)
                 addColumn(MessageView.messageIdLink()).setHeader(getTranslation("lbl.messageId"))
             }
-            downloadButton(getTranslation("cmd.download"), StreamResource("messages.csv", createCsv()))
+            horizontalLayout {
+                backButton(getTranslation("cmd.back"))
+                downloadButton(getTranslation("cmd.download"), StreamResource("messages.csv", createCsv()))
+            }
         }
     }
 

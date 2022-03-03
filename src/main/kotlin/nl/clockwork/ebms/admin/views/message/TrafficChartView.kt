@@ -29,6 +29,7 @@ import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.components.WithElement
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.dao.EbMSDAO
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -55,6 +56,7 @@ class TrafficChartView(
             createDateBar(binder,config)
             chart
             createChartBar(binder,config)
+            backButton(getTranslation("cmd.back"))
         }
     }
 

@@ -14,6 +14,7 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.confirmDialog
 import nl.clockwork.ebms.admin.components.downloadButton1
 import nl.clockwork.ebms.admin.views.MainLayout
@@ -34,10 +35,13 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                 addColumn(download(getTranslation("cmd.download")))
                 addColumn(delete(getTranslation("cmd.delete")))
             }
-            button {
-                text = getTranslation("cmd.new")
-                onLeftClick {
-                    navigateTo(CPAUploadView::class)
+            horizontalLayout {
+                backButton(getTranslation("cmd.back"))
+                button {
+                    text = getTranslation("cmd.new")
+                    onLeftClick {
+                        navigateTo(CPAUploadView::class)
+                    }
                 }
             }
         }

@@ -6,6 +6,7 @@ import com.vaadin.flow.component.accordion.Accordion
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.Utils.readVersion
+import nl.clockwork.ebms.admin.components.backButton
 
 
 @Route(value = "about", layout = MainLayout::class)
@@ -19,6 +20,7 @@ class AboutView : KComposite() {
                 versionsPanel()
                 licensePanel()
             }
+            backButton(getTranslation("cmd.back"))
         }
     }
 

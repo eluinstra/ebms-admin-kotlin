@@ -10,15 +10,15 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.CPAUtils
-import nl.clockwork.ebms.admin.components.aComboBox
-import nl.clockwork.ebms.admin.components.aTextField
-import nl.clockwork.ebms.admin.components.backButton
+import nl.clockwork.ebms.admin.components.*
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 import nl.clockwork.ebms.jaxb.JAXBParser
-import nl.ordina.ebms._2.*
+import nl.ordina.ebms._2.MessageRequest
+import nl.ordina.ebms._2.MessageRequestProperties
 import nl.ordina.ebms._2_18.EbMSMessageServiceException
 import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProtocolAgreement
+import org.slf4j.LoggerFactory
 import javax.validation.constraints.NotEmpty
 
 
@@ -84,8 +84,9 @@ class SendMessageView : KComposite(), WithBean {
             }
         }
         horizontalLayout {
-            submitButton = sendButton(getTranslation("cmd.send"))
             backButton(getTranslation("cmd.back"))
+            submitButton = sendButton(getTranslation("cmd.send"))
+            resetButton(getTranslation("cmd.reset"), binder)
         }
     }
 
@@ -197,17 +198,21 @@ class SendMessageView : KComposite(), WithBean {
 //                                dataSource = emptyList<DataSource>()
                             }
                         )
+                        showSuccessNotification(getTranslation("sendMessage.ok"))
                     } catch (e: EbMSMessageServiceException) {
-                        // TODO show error
-                        println(e)
+                        logger.error("", e)
+                        showErrorNotification(e.message)
                     }
                 } else {
-                    //TODO show error
+                    showErrorNotification("Invalid data")
                 }
             }
             setPrimary()
         }
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(SendMessageView::class.java)
+    }
 }
 
 data class SendMessageFormData(

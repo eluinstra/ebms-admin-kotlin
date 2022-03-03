@@ -9,23 +9,26 @@ import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 import java.io.InputStream
+import javax.validation.constraints.NotEmpty
 
 
 @Route(value = "service/cpaUpload", layout = MainLayout::class)
 @PageTitle("cpaUpload")
 class CPAUploadView : KComposite(), WithBean {
-    private val formData = EditUploadFormData()
+    private val formData = CpaUploadFormData()
     private val root = ui {
         verticalLayout {
-            editUploadForm()
+            h1(getTranslation("cpaUpload"))
+            cpaUploadForm()
         }
     }
 
-    private fun HasComponents.editUploadForm() : FormLayout {
-        val binder = beanValidationBinder<EditUploadFormData>()
+    private fun HasComponents.cpaUploadForm() : FormLayout {
+        val binder = beanValidationBinder<CpaUploadFormData>()
         binder.readBean(formData)
         //TODO use binder
         val memoryBuffer = MemoryBuffer()
@@ -38,17 +41,22 @@ class CPAUploadView : KComposite(), WithBean {
             }
             upload(memoryBuffer) {
                 text("CpaFile")
+                colspan = 2
                 addSucceededListener {
                     formData.cpaFile = memoryBuffer.inputStream
                     uploadButton.isEnabled = true
                 }
             }
             checkBox(getTranslation("lbl.overwrite")) {
+                colspan = 2
                 addValueChangeListener {
                     formData.overwrite = it.value
                 }
             }
-            add(uploadButton)
+            horizontalLayout {
+                backButton(getTranslation("cmd.back"))
+                add(uploadButton)
+            }
         }
     }
 
@@ -62,9 +70,10 @@ class CPAUploadView : KComposite(), WithBean {
             text = label
             addClickListener(clickListener)
         }
-
-    data class EditUploadFormData(
-        var cpaFile: InputStream? = null,
-        var overwrite: Boolean = false
-    )
 }
+
+data class CpaUploadFormData(
+    @field:NotEmpty
+    var cpaFile: InputStream? = null,
+    var overwrite: Boolean = false
+)

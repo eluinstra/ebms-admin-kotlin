@@ -1,7 +1,6 @@
 package nl.clockwork.ebms.admin.views.service.message
 
 import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setPrimary
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasComponents
@@ -11,14 +10,14 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.CPAUtils
-import nl.clockwork.ebms.admin.components.aComboBox
-import nl.clockwork.ebms.admin.components.backButton
+import nl.clockwork.ebms.admin.components.*
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
-import nl.clockwork.ebms.admin.views.service.cpa.UrlMappingsView
 import nl.clockwork.ebms.jaxb.JAXBParser
 import nl.ordina.ebms._2_18.EbMSMessageServiceException
 import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProtocolAgreement
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import javax.validation.constraints.NotEmpty
 
 
@@ -55,8 +54,9 @@ class PingView : KComposite(), WithBean {
             }
         }
         horizontalLayout {
-            submitButton = saveButton(getTranslation("cmd.ping"))
             backButton(getTranslation("cmd.back"))
+            submitButton = saveButton(getTranslation("cmd.ping"))
+            resetButton(getTranslation("cmd.reset"), binder)
         }
     }
 
@@ -67,8 +67,7 @@ class PingView : KComposite(), WithBean {
         } ?: run {
             fromPartyIdSelect.disable()
         }
-        toPartyIdSelect.disable()
-        submitButton.isEnabled = false
+        onFromPartyIdSelected(null)
     }
 
     private fun getCpa(cpaId: String) =
@@ -80,19 +79,18 @@ class PingView : KComposite(), WithBean {
         isEnabled = false
     }
 
-    private fun onFromPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
-        e.value?.let {
+    private fun onFromPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
+        e?.value?.let {
             toPartyIdSelect.isEnabled = true
             toPartyIdSelect.setItems(CPAUtils.getOtherPartyIds(getCpa(cpaIdSelect.value), it))
-
         } ?: run {
             toPartyIdSelect.disable()
         }
-        submitButton.isEnabled = false
+        onToPartyIdSelected(null)
     }
 
-    private fun onToPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
-        submitButton.isEnabled = e.value != null
+    private fun onToPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
+        submitButton.isEnabled = e?.value != null
     }
 
     private fun @VaadinDsl HorizontalLayout.saveButton(text: String?) =
@@ -104,18 +102,22 @@ class PingView : KComposite(), WithBean {
                     with(pingFormData) {
                         try {
                             ebMSMessageClient.ping(cpaId, fromPartyId, toPartyId)
+                            showSuccessNotification(getTranslation("ping.ok"))
                         } catch (e: EbMSMessageServiceException) {
-                            // TODO show error
-                            println(e)
+                            logger.error("", e)
+                            showErrorNotification(e.message)
                         }
                     }
                 } else {
-                    //TODO show error
+                    showErrorNotification("Invalid data")
                 }
             }
             setPrimary()
         }
 
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(PingView::class.java)
+    }
 }
 
 data class PingFormData(
