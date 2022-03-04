@@ -181,7 +181,7 @@ class SendMessageView : KComposite(), WithBean {
                 val formData = SendMessageFormData()
                 if (binder.writeBeanIfValid(formData)) {
                     try {
-                        ebMSMessageClient.sendMessage(
+                        val messageId = ebMSMessageClient.sendMessage(
                             MessageRequest().apply {
                                 properties = MessageRequestProperties().apply {
                                     cpaId = formData.cpaId
@@ -198,7 +198,7 @@ class SendMessageView : KComposite(), WithBean {
 //                                dataSource = emptyList<DataSource>()
                             }
                         )
-                        showSuccessNotification(getTranslation("sendMessage.ok"))
+                        showSuccessNotification(getTranslation("sendMessage.ok", messageId))
                     } catch (e: EbMSMessageServiceException) {
                         logger.error("", e)
                         showErrorNotification(e.message)

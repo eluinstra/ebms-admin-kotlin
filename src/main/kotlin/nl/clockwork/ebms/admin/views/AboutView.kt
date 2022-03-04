@@ -31,8 +31,8 @@ class AboutView : KComposite() {
             }
             content {
                 verticalLayout {
-                    span(readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties"))
-                    span(readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties"))
+                    span(getTranslation("ebms-admin.version", readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties")))
+                    span(getTranslation("ebms-core.version", readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties")))
                 }
             }
         }
