@@ -12,6 +12,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.components.backButton
+import nl.clockwork.ebms.admin.components.showErrorNotification
 import nl.clockwork.ebms.admin.components.showSuccessNotification
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -19,43 +20,47 @@ import java.io.InputStream
 import javax.validation.constraints.NotEmpty
 
 
-@Route(value = "service/cpaUpload", layout = MainLayout::class)
+@Route(value = "service/simpleCpaUpload", layout = MainLayout::class)
 @PageTitle("cpaUpload")
-class CPAUploadView : KComposite(), WithBean {
-    private lateinit var uploadButton1: Button
-    private val formData = CpaUploadFormData()
+class SimpleCPAUploadView : KComposite(), WithBean {
+    private val formData = SimpleCpaUploadFormData()
     private val root = ui {
         verticalLayout {
             h2(getTranslation("cpaUpload"))
             cpaUploadForm()
             horizontalLayout {
                 backButton(getTranslation("cmd.back"))
-                add(uploadButton1)
             }
         }
     }
 
-    private fun HasComponents.cpaUploadForm() : FormLayout {
-        val binder = beanValidationBinder<CpaUploadFormData>()
-        binder.readBean(formData)
-        //TODO use binder
+    private fun HasComponents.cpaUploadForm(): FormLayout {
         val memoryBuffer = MemoryBuffer()
         return formLayout {
-            uploadButton1 = createButton(getTranslation("cmd.upload"), Icon("lumo", "upload"), 1) {
-                isEnabled = false
-                addClickListener {
-                    formData.cpaFile?.let { cpaClient.insertCPA(String(formData.cpaFile!!), formData.overwrite) }
-                    navigateTo(CpasView::class)
-                }
-            }
             upload(memoryBuffer) {
                 text("CpaFile")
                 colspan = 2
                 addSucceededListener {
-                    uploadButton1.isEnabled = true
-                    formData.cpaFile = memoryBuffer.inputStream.readAllBytes()
-                    cpaClient.insertCPA(String(memoryBuffer.inputStream.readAllBytes()), formData.overwrite)
-                    showSuccessNotification("Cpa uploaded")
+                    try {
+                        val cpa = String(memoryBuffer.inputStream.readAllBytes())
+                        if (formData.validate) {
+                            cpaClient.validateCPA(cpa)
+                            showSuccessNotification(getTranslation("cpa.valid"))
+                        } else {
+                            cpaClient.insertCPA(cpa, formData.overwrite)
+                            showSuccessNotification("Cpa uploaded")
+                        }
+                    } catch (e: java.lang.Exception) {
+                        showErrorNotification(e.message)
+                        throw e
+                    }
+                }
+            }
+            checkBox(getTranslation("lbl.validate")) {
+                colspan = 2
+                isEnabled = true
+                addValueChangeListener {
+                    formData.validate = it.value
                 }
             }
             checkBox(getTranslation("lbl.overwrite")) {
@@ -67,22 +72,9 @@ class CPAUploadView : KComposite(), WithBean {
             }
         }
     }
-
-    private fun FormLayout.createButton(
-        label: String,
-        icon: Icon,
-        colspan: Int,
-        block: () -> Unit = {}
-    ): Button =
-        button(label, icon) {
-            setColspan(this, colspan)
-            text = label
-            block()
-        }
 }
 
-data class CpaUploadFormData(
-    @field:NotEmpty
-    var cpaFile: ByteArray? = null,
+data class SimpleCpaUploadFormData(
+    var validate: Boolean = false,
     var overwrite: Boolean = false
 )

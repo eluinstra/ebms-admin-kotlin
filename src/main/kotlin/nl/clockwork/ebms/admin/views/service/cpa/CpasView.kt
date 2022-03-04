@@ -51,7 +51,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                     text = getTranslation("cmd.new")
                     icon = Icon("lumo", "edit")
                     onLeftClick {
-                        navigateTo(CPAUploadView::class)
+                        navigateTo(SimpleCPAUploadView::class)
                     }
                 }
             }
@@ -60,7 +60,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
 
     private fun download(text: String): ComponentRenderer<Anchor, String> =
         ComponentRenderer {
-            cpaId -> downloadButton1(text, createResource("${cpaId}.xml", cpaClient.getCPA(cpaId))) {
+            cpaId -> downloadButton1(text, createResource("${cpaId}.xml", cpaClient.getCPA(cpaId) ?: "")) {
                 addThemeVariants(ButtonVariant.LUMO_SMALL)
             }
         }
@@ -85,7 +85,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
         }
 
     private fun cpaDataProvider() : DataProvider<String, *> =
-        DataProvider.fromStream(cpaClient.cpaIds.stream())
+        DataProvider.ofCollection(cpaClient.cpaIds)
 
     override fun afterNavigation(event: AfterNavigationEvent?) {
         grid.refresh()
