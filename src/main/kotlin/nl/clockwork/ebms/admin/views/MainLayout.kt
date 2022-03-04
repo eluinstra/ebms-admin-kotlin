@@ -14,15 +14,12 @@ import nl.clockwork.ebms.admin.views.service.message.*
 import nl.clockwork.ebms.admin.views.service.cpa.CpasView as CpaServiceView
 
 //@Viewport(Viewport.DEVICE_DIMENSIONS)
+@CssImport("./styles/custom-lumo-theme.css")
 @CssImport("./styles/custom-styles.css")
 class MainLayout : KComposite(), RouterLayout {
     private val root = ui {
         appLayout {
             navbar {
-                image("images/ebms_admin.gif") {
-                    getTranslation("home")
-                    onLeftClick { navigateTo(HomeView::class) }
-                } //, getTranslation("home"))
                 menuBar {
                     item(getTranslation("home"), { navigateTo(HomeView::class) })
                     item(getTranslation("cpaService")) {
@@ -37,7 +34,6 @@ class MainLayout : KComposite(), RouterLayout {
                         separator()
                         item(getTranslation("unprocessedMessages"), { navigateTo(UnprocessedMessagesView::class) })
                         separator()
-//                        item(getTranslation("messageEvents"))
                         item(getTranslation("messageSend"), { navigateTo(SendMessageView::class) })
                         item(getTranslation("messageResend"), { navigateTo(ResendMessageView::class) })
                         separator()

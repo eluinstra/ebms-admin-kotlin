@@ -24,7 +24,7 @@ class ResendMessageView : KComposite(), WithBean {
 
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("messageResend"))
+            h2(getTranslation("messageResend"))
             resendMessageForm()
             horizontalLayout {
                 backButton(getTranslation("cmd.back"))
@@ -47,12 +47,12 @@ class ResendMessageView : KComposite(), WithBean {
                 val formData = ResendMessageFormData()
                 if (binder.writeBeanIfValid(formData)) {
                     try {
-                        ebMSMessageClient.resendMessage(
+                        val messageId = ebMSMessageClient.resendMessage(
                             Holder<String?>().apply {
                                 formData.messageId
                             }
                         )
-                        showSuccessNotification(getTranslation("sendMessage.ok"))
+                        showSuccessNotification(getTranslation("resendMessage.ok", messageId))
                     } catch (e: EbMSMessageServiceException) {
                         logger.error("", e)
                         showErrorNotification(e.message)

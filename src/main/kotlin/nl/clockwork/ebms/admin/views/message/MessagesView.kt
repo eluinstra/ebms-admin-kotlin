@@ -5,6 +5,7 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid.SelectionMode.NONE
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.provider.Query
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer
@@ -70,38 +71,67 @@ class MessagesView : KComposite(), WithBean, WithDate {
         }
 
     private fun HasComponents.createMessageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
-        grid(EbMSMessage::class.java) {
-            setDataProvider(dataProvider)
+        grid(dataProvider) {
             setSelectionMode(NONE)
-            addColumn(MessageView.messageIdLink())
-                .setHeader(getTranslation("lbl.messageId")).setAutoWidth(true).isFrozen = true
-            addColumn("messageNr")
-                .setHeader(getTranslation("lbl.messageNr")).setAutoWidth(true).textAlign = ColumnTextAlign.END
-            addColumn("conversationId")
-                .setHeader(getTranslation("lbl.conversationId")).isAutoWidth = true
-            addColumn("refToMessageId")
-                .setHeader(getTranslation("lbl.refToMessageId")).isAutoWidth = true
-            addColumn(LocalDateTimeRenderer({ m -> toLocalDateTime(m.timestamp) }, DISPLAY_DATE_TIME_FORMATTER))
-                .setHeader(getTranslation("lbl.timestamp")).isAutoWidth = true
-            addColumn("cpaId")
-                .setHeader(getTranslation("lbl.cpaId")).isAutoWidth = true
-            addColumn("fromPartyId")
-                .setHeader(getTranslation("lbl.fromPartyId")).isAutoWidth = true
-            addColumn("fromRole")
-                .setHeader(getTranslation("lbl.fromRole")).isAutoWidth = true
-            addColumn("toPartyId")
-                .setHeader(getTranslation("lbl.toPartyId")).isAutoWidth = true
-            addColumn("toRole")
-                .setHeader(getTranslation("lbl.toRole")).isAutoWidth = true
-            addColumn("service")
-                .setHeader(getTranslation("lbl.service")).isAutoWidth = true
-            addColumn("action")
-                .setHeader(getTranslation("lbl.action")).isAutoWidth = true
-            addColumn("status")
-                .setHeader(getTranslation("lbl.status")).isAutoWidth = true
-            addColumn(LocalDateTimeRenderer({ m -> m.statusTime?.let { toLocalDateTime(m.statusTime) } }, DISPLAY_DATE_TIME_FORMATTER))
-                .setHeader(getTranslation("lbl.statusTime"))
-                .setAutoWidth(true)
+            addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
+            addColumn(MessageView.messageIdLink()).apply {
+                setHeader(getTranslation("lbl.messageId"))
+                isAutoWidth = true
+                isFrozen = true
+            }
+            addColumn("messageNr").apply {
+                setHeader(getTranslation("lbl.messageNr"))
+                isAutoWidth = true
+                textAlign = ColumnTextAlign.END
+            }
+            addColumn("conversationId").apply {
+                setHeader(getTranslation("lbl.conversationId"))
+                isAutoWidth = true
+            }
+            addColumn("refToMessageId").apply {
+                setHeader(getTranslation("lbl.refToMessageId"))
+                isAutoWidth = true
+            }
+            addColumn(LocalDateTimeRenderer({ m -> toLocalDateTime(m.timestamp) }, DISPLAY_DATE_TIME_FORMATTER)).apply {
+                setHeader(getTranslation("lbl.timestamp"))
+                isAutoWidth = true
+            }
+            addColumn("cpaId").apply {
+                setHeader(getTranslation("lbl.cpaId"))
+                isAutoWidth = true
+            }
+            addColumn("fromPartyId").apply {
+                setHeader(getTranslation("lbl.fromPartyId"))
+                isAutoWidth = true
+            }
+            addColumn("fromRole").apply {
+                setHeader(getTranslation("lbl.fromRole"))
+                isAutoWidth = true
+            }
+            addColumn("toPartyId").apply {
+                setHeader(getTranslation("lbl.toPartyId"))
+                isAutoWidth = true
+            }
+            addColumn("toRole").apply {
+                setHeader(getTranslation("lbl.toRole"))
+                isAutoWidth = true
+            }
+            addColumn("service").apply {
+                setHeader(getTranslation("lbl.service"))
+                isAutoWidth = true
+            }
+            addColumn("action").apply {
+                setHeader(getTranslation("lbl.action"))
+                isAutoWidth = true
+            }
+            addColumn("status").apply {
+                setHeader(getTranslation("lbl.status"))
+                isAutoWidth = true
+            }
+            addColumn(LocalDateTimeRenderer({ m -> m.statusTime?.let { toLocalDateTime(m.statusTime) } }, DISPLAY_DATE_TIME_FORMATTER)).apply {
+                setHeader(getTranslation("lbl.statusTime"))
+                isAutoWidth = true
+            }
         }
 
     private fun createCsv(): InputStreamFactory =

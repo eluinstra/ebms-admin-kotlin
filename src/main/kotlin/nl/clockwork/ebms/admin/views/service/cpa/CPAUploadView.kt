@@ -22,7 +22,7 @@ class CPAUploadView : KComposite(), WithBean {
     private val formData = CpaUploadFormData()
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("cpaUpload"))
+            h2(getTranslation("cpaUpload"))
             cpaUploadForm()
         }
     }

@@ -4,7 +4,9 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.refresh
 import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
@@ -26,9 +28,13 @@ class UrlMappingsView : KComposite(), WithBean {
             grid = grid(urlMappingDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
-                addColumn(UpdateUrlMappingView.urlMappingLink())
-                addColumn("destination")
-                addColumn(delete(getTranslation("cmd.delete")))
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
+                addColumn(UpdateUrlMappingView.urlMappingLink()).setHeader(getTranslation("lbl.source"))
+                addColumn("destination").setHeader(getTranslation("lbl.destination"))
+                addColumn(delete(getTranslation("cmd.delete"))).apply {
+                    isAutoWidth = true
+                    flexGrow = 0
+                }
             }
             horizontalLayout {
                 backButton(getTranslation("cmd.back"))
@@ -44,14 +50,15 @@ class UrlMappingsView : KComposite(), WithBean {
 
     private fun delete(text: String) : ComponentRenderer<Button, UrlMapping> =
         ComponentRenderer {
-                urlMapping -> Button(text).apply {
-            addClickListener {
-                confirmDialog {
-                    urlMappingClient.deleteURLMapping(urlMapping.source)
-                    grid.refresh()
+            urlMapping -> Button(text).apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL)
+                addClickListener {
+                    confirmDialog {
+                        urlMappingClient.deleteURLMapping(urlMapping.source)
+                        grid.refresh()
+                    }
                 }
             }
-        }
         }
 
     private fun urlMappingDataProvider() : DataProvider<UrlMapping, *> =

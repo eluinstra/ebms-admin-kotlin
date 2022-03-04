@@ -1,5 +1,6 @@
 package nl.clockwork.ebms.admin.components
 
+import com.github.mvysny.karibudsl.v10.VaadinDsl
 import com.github.mvysny.karibudsl.v10.anchor
 import com.github.mvysny.karibudsl.v10.button
 import com.vaadin.flow.component.HasComponents
@@ -16,11 +17,13 @@ fun HasComponents.downloadButton(text: String, resource: StreamResource) : Ancho
 		button(text)
 	}
 
-fun downloadButton1(text: String, resource: StreamResource) : Anchor =
+fun downloadButton1(text: String, resource: StreamResource, block: (@VaadinDsl Button).() -> Unit = {}) : Anchor =
 	Anchor("").apply {
 		setHref(resource)
 		element.setAttribute("download", true)
-		add(Button(text))
+		add(Button(text).apply {
+			block()
+		})
 	}
 
 fun downloadButton2(text: String, resource: StreamResource) : Button =

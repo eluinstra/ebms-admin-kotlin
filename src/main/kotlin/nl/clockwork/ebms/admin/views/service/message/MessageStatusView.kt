@@ -23,7 +23,7 @@ class MessageStatusView : KComposite(), WithBean {
 
     private val root = ui {
         verticalLayout {
-            h1(getTranslation("messageStatus"))
+            h2(getTranslation("messageStatus"))
             messageStatusForm()
             horizontalLayout {
                 backButton(getTranslation("cmd.back"))
@@ -46,8 +46,8 @@ class MessageStatusView : KComposite(), WithBean {
                 val formData = MessageStatusFormData()
                 if (binder.writeBeanIfValid(formData)) {
                     try {
-                        ebMSMessageClient.getMessageStatus(formData.messageId)
-                        showSuccessNotification(getTranslation("getMessageStatus.ok"))
+                        val status = ebMSMessageClient.getMessageStatus(formData.messageId)
+                        showSuccessNotification(getTranslation("getMessageStatus.ok", status.status))
                     } catch (e: EbMSMessageServiceException) {
                         logger.error("", e)
                         showErrorNotification(e.message)

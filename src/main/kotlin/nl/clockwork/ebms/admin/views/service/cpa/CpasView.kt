@@ -4,7 +4,9 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.refresh
 import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
@@ -31,9 +33,16 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
             grid = grid(cpaDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
                 addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
-                addColumn(download(getTranslation("cmd.download")))
-                addColumn(delete(getTranslation("cmd.delete")))
+                addColumn(download(getTranslation("cmd.download"))).apply {
+                    isAutoWidth = true
+                    flexGrow = 0
+                }
+                addColumn(delete(getTranslation("cmd.delete"))).apply {
+                    isAutoWidth = true
+                    flexGrow = 0
+                }
             }
             horizontalLayout {
                 backButton(getTranslation("cmd.back"))
@@ -49,7 +58,9 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
 
     private fun download(text: String): ComponentRenderer<Anchor, String> =
         ComponentRenderer {
-            cpaId -> downloadButton1(text, createResource("${cpaId}.xml", cpaClient.getCPA(cpaId)))
+            cpaId -> downloadButton1(text, createResource("${cpaId}.xml", cpaClient.getCPA(cpaId))) {
+                addThemeVariants(ButtonVariant.LUMO_SMALL)
+            }
         }
 
     private fun createResource(resourceName: String, cpa: String): StreamResource =
@@ -60,6 +71,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
     private fun delete(text: String) : ComponentRenderer<Button, String> =
         ComponentRenderer {
             cpaId -> Button(text).apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL)
                 addClickListener {
                     confirmDialog {
                         cpaClient.deleteCPA(cpaId)

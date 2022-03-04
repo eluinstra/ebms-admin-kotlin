@@ -5,6 +5,7 @@ import com.github.mvysny.karibudsl.v10.grid
 import com.github.mvysny.karibudsl.v10.h2
 import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.vaadin.flow.component.grid.Grid.SelectionMode
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.provider.Query
 import com.vaadin.flow.router.PageTitle
@@ -23,6 +24,7 @@ class CpasView : KComposite(), WithBean {
             h2(getTranslation("cpas"))
             grid(cpaDataProvider()) {
                 setSelectionMode(SelectionMode.NONE)
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
                 addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
             }
             backButton(getTranslation("cmd.back"))

@@ -5,6 +5,7 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.component.grid.Grid.SelectionMode.NONE
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.provider.Query
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer
@@ -66,33 +67,54 @@ class TrafficView : KComposite(), WithBean, WithDate {
         }
 
     private fun HasComponents.createMessageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
-        grid(EbMSMessage::class.java) {
-            setDataProvider(dataProvider)
+        grid(dataProvider) {
             setSelectionMode(NONE)
-            addColumn(MessageView.messageIdLink())
-                .setHeader(getTranslation("lbl.messageId")).setAutoWidth(true).isFrozen = true
-            addColumn("conversationId")
-                .setHeader(getTranslation("lbl.conversationId")).isAutoWidth = true
-            addColumn(LocalDateTimeRenderer({ m -> toLocalDateTime(m.timestamp) }, WithDate.DISPLAY_DATE_TIME_FORMATTER))
-                .setHeader(getTranslation("lbl.timestamp")).isAutoWidth = true
-            addColumn("cpaId")
-                .setHeader(getTranslation("lbl.cpaId")).isAutoWidth = true
-            addColumn("fromRole")
-                .setHeader(getTranslation("lbl.fromRole")).isAutoWidth = true
-            addColumn("toRole")
-                .setHeader(getTranslation("lbl.toRole")).isAutoWidth = true
-            addColumn("service")
-                .setHeader(getTranslation("lbl.service")).isAutoWidth = true
-            addColumn("action")
-                .setHeader(getTranslation("lbl.action")).isAutoWidth = true
-            addColumn("status")
-                .setHeader(getTranslation("lbl.status"))
-                .setAutoWidth(true)
-                .classNameGenerator = SerializableFunction { Utils.getTableCellCssClass(it.status) }
-            addColumn(LocalDateTimeRenderer({ m ->
-                m.statusTime?.let { toLocalDateTime(m.statusTime) }
-            }, WithDate.DISPLAY_DATE_TIME_FORMATTER))
-                .setHeader(getTranslation("lbl.statusTime")).isAutoWidth = true
+            addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
+            addColumn(MessageView.messageIdLink()).apply {
+                setHeader(getTranslation("lbl.messageId"))
+                isAutoWidth = true
+                isFrozen = true
+            }
+            addColumn("conversationId").apply {
+                setHeader(getTranslation("lbl.conversationId"))
+                isAutoWidth = true
+            }
+            addColumn(LocalDateTimeRenderer({ m -> toLocalDateTime(m.timestamp) }, WithDate.DISPLAY_DATE_TIME_FORMATTER)).apply {
+                setHeader(getTranslation("lbl.timestamp"))
+                isAutoWidth = true
+            }
+            addColumn("cpaId").apply {
+                setHeader(getTranslation("lbl.cpaId"))
+                isAutoWidth = true
+            }
+            addColumn("fromRole").apply {
+                setHeader(getTranslation("lbl.fromRole"))
+                isAutoWidth = true
+            }
+            addColumn("toRole").apply {
+                setHeader(getTranslation("lbl.toRole"))
+                isAutoWidth = true
+            }
+            addColumn("service").apply {
+                setHeader(getTranslation("lbl.service"))
+                isAutoWidth = true
+            }
+            addColumn("action").apply {
+                setHeader(getTranslation("lbl.action"))
+                isAutoWidth = true
+            }
+            addColumn("status").apply {
+                setHeader(getTranslation("lbl.status"))
+                isAutoWidth = true
+                classNameGenerator = SerializableFunction { Utils.getTableCellCssClass(it.status) }
+            }
+            addColumn(LocalDateTimeRenderer(
+                { m -> m.statusTime?.let { toLocalDateTime(m.statusTime) } },
+                WithDate.DISPLAY_DATE_TIME_FORMATTER)
+            ).apply {
+                setHeader(getTranslation("lbl.statusTime"))
+                isAutoWidth = true
+            }
             setClassNameGenerator { Utils.getTableRowCssClass(it.status) }
         }
 
