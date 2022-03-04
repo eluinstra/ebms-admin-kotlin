@@ -5,20 +5,13 @@ import java.awt.Color
 import java.time.LocalDateTime
 
 
-class TrafficChartConfig(
+data class TrafficChartConfig(
     var timeUnit: TimeUnit,
     var from: LocalDateTime,
     var ebMSMessageTrafficChartOption: EbMSMessageTrafficChartOption
 ) {
-    fun getTimeUnits(): List<TimeUnit> =
-        TimeUnit.values().asList()
-
     val to: LocalDateTime
         get() = from.plus(timeUnit.period)
-
-    fun getEbMSMessageTrafficChartOptions(): List<EbMSMessageTrafficChartOption> {
-        return EbMSMessageTrafficChartOption.values().asList()
-    }
 
     fun previousPeriod() {
         from = from.minus(timeUnit.period)
@@ -33,15 +26,12 @@ class TrafficChartConfig(
     }
 
     companion object {
-        fun of(timeUnit: TimeUnit, ebMSMessageTrafficChartOption: EbMSMessageTrafficChartOption): TrafficChartConfig {
-            val from = timeUnit.getFrom()
-            return TrafficChartConfig(timeUnit, from, ebMSMessageTrafficChartOption)
-        }
+        fun of(timeUnit: TimeUnit, ebMSMessageTrafficChartOption: EbMSMessageTrafficChartOption): TrafficChartConfig =
+            TrafficChartConfig(timeUnit, timeUnit.getFrom(), ebMSMessageTrafficChartOption)
 
-        fun createChartTitle(config: TrafficChartConfig): String {
-            return config.ebMSMessageTrafficChartOption
+        fun createChartTitle(config: TrafficChartConfig): String =
+            config.ebMSMessageTrafficChartOption
                 .title + " " + config.timeUnit.dateFormatter.format(config.from)
-        }
     }
 }
 

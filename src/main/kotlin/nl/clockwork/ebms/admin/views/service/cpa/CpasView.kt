@@ -3,6 +3,7 @@ package nl.clockwork.ebms.admin.views.service.cpa
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.refresh
+import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
@@ -19,7 +20,7 @@ import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.confirmDialog
-import nl.clockwork.ebms.admin.components.downloadButton1
+import nl.clockwork.ebms.admin.components.createDownloadButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 import java.io.ByteArrayInputStream
@@ -34,8 +35,11 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
             grid = grid(cpaDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
-                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
-                addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
+                addItemClickListener {
+                    CpaView.navigateTo(it.item)
+                }
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
+                addColumn(cpaId()).setHeader(getTranslation("lbl.cpaId"))
                 addColumn(download(getTranslation("cmd.download"))).apply {
                     isAutoWidth = true
                     flexGrow = 0
@@ -58,14 +62,19 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
         }
     }
 
+    private fun cpaId(): ComponentRenderer<Text, String> =
+        ComponentRenderer {
+            cpaId -> Text(cpaId)
+        }
+
     private fun download(text: String): ComponentRenderer<Anchor, String> =
         ComponentRenderer {
-            cpaId -> downloadButton1(text, createResource("${cpaId}.xml", cpaClient.getCPA(cpaId) ?: "")) {
+            cpaId -> createDownloadButton(text, resource("${cpaId}.xml", cpaClient.getCPA(cpaId) ?: "")) {
                 addThemeVariants(ButtonVariant.LUMO_SMALL)
             }
         }
 
-    private fun createResource(resourceName: String, cpa: String): StreamResource =
+    private fun resource(resourceName: String, cpa: String): StreamResource =
         StreamResource(resourceName, InputStreamFactory {
             ByteArrayInputStream(cpa.toByteArray())
         })
@@ -85,7 +94,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
         }
 
     private fun cpaDataProvider() : DataProvider<String, *> =
-        DataProvider.ofCollection(cpaClient.cpaIds)
+        DataProvider.fromStream(cpaClient.cpaIds.stream())
 
     override fun afterNavigation(event: AfterNavigationEvent?) {
         grid.refresh()

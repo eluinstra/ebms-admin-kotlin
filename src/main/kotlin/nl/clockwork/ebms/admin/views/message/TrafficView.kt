@@ -34,14 +34,14 @@ class TrafficView : KComposite(), WithBean, WithDate {
                 messageNr = 0,
                 serviceMessage = false
             )
-            val dataProvider = createMessageDataProvider(messageFilter)
-            createSearchFilterDetails(getTranslation("messageFilter"),messageFilter,dataProvider)
-            createMessageGrid(dataProvider)
+            val dataProvider = messageDataProvider(messageFilter)
+            searchFilterDetails(getTranslation("messageFilter"),messageFilter,dataProvider)
+            messageGrid(dataProvider)
             backButton(getTranslation("cmd.back"))
         }
     }
 
-    private fun createMessageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> {
+    private fun messageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> {
         return DataProvider.fromCallbacks(
             { query: Query<EbMSMessage, Void> ->
                 ebMSAdminDAO.selectMessages(
@@ -54,7 +54,7 @@ class TrafficView : KComposite(), WithBean, WithDate {
         )
     }
 
-    private fun HasComponents.createSearchFilterDetails(
+    private fun HasComponents.searchFilterDetails(
         label: String,
         messageFilter: EbMSMessageFilter,
         dataProvider: DataProvider<EbMSMessage, *>
@@ -66,11 +66,14 @@ class TrafficView : KComposite(), WithBean, WithDate {
             }
         }
 
-    private fun HasComponents.createMessageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
+    private fun HasComponents.messageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
         grid(dataProvider) {
             setSelectionMode(NONE)
+            addItemClickListener {
+                MessageView.navigateTo(it.item.messageId)
+            }
             addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
-            addColumn(MessageView.messageIdLink()).apply {
+            addColumn("messageId").apply {
                 setHeader(getTranslation("lbl.messageId"))
                 isAutoWidth = true
                 isFrozen = true

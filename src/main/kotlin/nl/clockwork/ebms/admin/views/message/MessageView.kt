@@ -1,6 +1,7 @@
 package nl.clockwork.ebms.admin.views.message
 
 import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.kaributools.navigateTo
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
@@ -13,6 +14,7 @@ import nl.clockwork.ebms.admin.DeliveryLog
 import nl.clockwork.ebms.admin.DeliveryTask
 import nl.clockwork.ebms.admin.EbMSAttachment
 import nl.clockwork.ebms.admin.EbMSMessage
+import nl.clockwork.ebms.admin.components.aLabel
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -60,16 +62,9 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
             }
         }
 
-    private fun FormLayout.formLabel(label: String): Label =
-        label(label) {
-            element.style.set("font-size", "14px")
-            element.style.set("font-weight", "400")
-            element.style.set("color", "#bbb")
-        }
-
     private fun FormLayout.deliveryTasks(deliveryTask: DeliveryTask): Component =
         verticalLayout() {
-            formLabel(getTranslation("lbl.deliveryTasks"))
+            aLabel(getTranslation("lbl.deliveryTasks"))
             deliveryTaskTable(listOf(deliveryTask))
         }
 
@@ -85,7 +80,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
     private fun FormLayout.deliveryLogs(deliveryLogs: List<DeliveryLog>): Component =
         verticalLayout() {
             setColspan(this, 2) //
-            formLabel(getTranslation("lbl.deliveryLog"))
+            aLabel(getTranslation("lbl.deliveryLog"))
             deliveryLogTable(deliveryLogs)
         }
 
@@ -103,7 +98,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
     private fun FormLayout.attachments(attachments: List<EbMSAttachment>): Component =
         verticalLayout() {
             setColspan(this, 2) //
-            add(formLabel(getTranslation("lbl.attachments")))
+            add(aLabel(getTranslation("lbl.attachments")))
             add(attachmentsTable(attachments))
         }
 
@@ -119,10 +114,11 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
         }
 
     companion object {
-        fun messageIdLink(): ComponentRenderer<RouterLink, EbMSMessage> =
-            ComponentRenderer { message -> messageRouterLink(MessageView::class.java, message.messageId) }
+        fun navigateTo(messageId: String) {
+            messageRouterLink(messageId).navigateTo()
+        }
 
-        private fun messageRouterLink(messageView: Class<MessageView>, messageId: String): RouterLink =
-            RouterLink(messageId, messageView, RouteParameters("messageId", messageId))
+        private fun messageRouterLink(messageId: String): RouterLink =
+            RouterLink(messageId, MessageView::class.java, RouteParameters("messageId", messageId))
     }
 }

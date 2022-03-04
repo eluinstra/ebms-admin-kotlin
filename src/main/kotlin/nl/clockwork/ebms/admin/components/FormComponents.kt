@@ -2,10 +2,19 @@ package nl.clockwork.ebms.admin.components
 
 import com.github.mvysny.karibudsl.v10.VaadinDsl
 import com.github.mvysny.karibudsl.v10.comboBox
+import com.github.mvysny.karibudsl.v10.label
 import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.formlayout.FormLayout
+import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.textfield.TextField
+
+fun FormLayout.aLabel(label: String): Label =
+    label(label) {
+        element.style.set("font-size", "13px")
+        element.style.set("font-weight", "400")
+        element.style.set("color", "#666")
+    }
 
 fun FormLayout.aTextField(label: String, colspan: Int, block: (@VaadinDsl TextField).() -> Unit = {}): TextField =
     textField(label) {

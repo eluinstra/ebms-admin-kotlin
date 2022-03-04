@@ -1,5 +1,9 @@
 # ebms-admin-kotlin
 
+## Todo:
+- details/edit inline in grid or in a dialog instead of on separate detail pages
+- grid functions per row in context menu (available on right click)
+
 ## Issues
 - Grid refresh not working
 - i18n (getTranslation()) params printed as pointers ([Ljava.lang.Object;@17b51763) instead of string ("test")

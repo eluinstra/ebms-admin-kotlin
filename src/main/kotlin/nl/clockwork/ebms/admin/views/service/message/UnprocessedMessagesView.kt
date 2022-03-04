@@ -1,9 +1,11 @@
 package nl.clockwork.ebms.admin.views.service.message
 
 import com.github.mvysny.karibudsl.v10.*
+import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
+import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
@@ -28,8 +30,11 @@ class UnprocessedMessagesView : KComposite(), WithBean {
             grid = grid(messageIdDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
-                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
-                addColumn(MessageView.messageIdLink()).setHeader(getTranslation("lbl.messageId"))
+                addItemClickListener {
+                    MessageView.navigateTo(it.item)
+                }
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
+                addColumn(messageId()).setHeader(getTranslation("lbl.messageId"))
             }
             horizontalLayout {
                 backButton(getTranslation("cmd.back"))
@@ -37,6 +42,11 @@ class UnprocessedMessagesView : KComposite(), WithBean {
             }
         }
     }
+
+    private fun messageId(): ComponentRenderer<Text, String> =
+        ComponentRenderer {
+                messageId -> Text(messageId)
+        }
 
     private fun createCsv(): InputStreamFactory =
         InputStreamFactory {

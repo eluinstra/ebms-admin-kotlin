@@ -137,8 +137,9 @@ class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
         }
 
     companion object {
-        fun urlMappingLink(): ComponentRenderer<RouterLink, nl.ordina.cpa.urlmapping._2.UrlMapping> =
-            ComponentRenderer { mapping -> urlMappingRouterLink(mapping.source) }
+        fun navigateTo(sourceUrl: String) {
+            urlMappingRouterLink(sourceUrl).navigateTo()
+        }
 
         private fun urlMappingRouterLink(sourceUrl: String): RouterLink =
             RouterLink(sourceUrl, UpdateUrlMappingView::class.java, RouteParameters("sourceUrl", URLEncoder.encode(sourceUrl)))

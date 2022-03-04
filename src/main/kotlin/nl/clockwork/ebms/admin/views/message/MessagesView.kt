@@ -73,8 +73,11 @@ class MessagesView : KComposite(), WithBean, WithDate {
     private fun HasComponents.createMessageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
         grid(dataProvider) {
             setSelectionMode(NONE)
-            addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
-            addColumn(MessageView.messageIdLink()).apply {
+            addItemClickListener {
+                MessageView.navigateTo(it.item.messageId)
+            }
+            addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
+            addColumn("messageId").apply {
                 setHeader(getTranslation("lbl.messageId"))
                 isAutoWidth = true
                 isFrozen = true

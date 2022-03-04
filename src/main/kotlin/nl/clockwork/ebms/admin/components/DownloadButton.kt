@@ -18,17 +18,11 @@ fun HasComponents.downloadButton(text: String, resource: StreamResource) : Ancho
 		button(text, Icon("lumo", "download"))
 	}
 
-fun downloadButton1(text: String, resource: StreamResource, block: (@VaadinDsl Button).() -> Unit = {}) : Anchor =
+fun createDownloadButton(text: String, resource: StreamResource, block: (@VaadinDsl Button).() -> Unit = {}) : Anchor =
 	Anchor("").apply {
 		setHref(resource)
 		element.setAttribute("download", true)
 		add(Button(text, Icon("lumo", "download")).apply {
 			block()
 		})
-	}
-
-fun downloadButton2(text: String, resource: StreamResource) : Button =
-	Button(text, Icon("lumo", "download")) {
-		val registration = VaadinSession.getCurrent().resourceRegistry.registerResource(resource)
-		UI.getCurrent().page.setLocation(registration.resourceUri)
 	}

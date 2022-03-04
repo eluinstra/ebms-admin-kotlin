@@ -10,6 +10,7 @@ import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
+import com.vaadin.flow.function.ValueProvider
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import nl.clockwork.ebms.admin.components.backButton
@@ -29,8 +30,11 @@ class UrlMappingsView : KComposite(), WithBean {
             grid = grid(urlMappingDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
-                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
-                addColumn(UpdateUrlMappingView.urlMappingLink()).setHeader(getTranslation("lbl.source"))
+                addItemClickListener {
+                    UpdateUrlMappingView.navigateTo(it.item.source)
+                }
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
+                addColumn("source").setHeader(getTranslation("lbl.source"))
                 addColumn("destination").setHeader(getTranslation("lbl.destination"))
                 addColumn(delete(getTranslation("cmd.delete"))).apply {
                     isAutoWidth = true

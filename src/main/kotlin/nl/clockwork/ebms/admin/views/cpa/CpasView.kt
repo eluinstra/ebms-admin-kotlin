@@ -24,8 +24,11 @@ class CpasView : KComposite(), WithBean {
             h2(getTranslation("cpas"))
             grid(cpaDataProvider()) {
                 setSelectionMode(SelectionMode.NONE)
-                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
-                addColumn(CpaView.cpaIdLink()).setHeader(getTranslation("lbl.cpaId"))
+                addItemClickListener {
+                    CpaView.navigateTo(it.item.cpaId)
+                }
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
+                addColumn("cpaId").setHeader(getTranslation("lbl.cpaId"))
             }
             backButton(getTranslation("cmd.back"))
         }

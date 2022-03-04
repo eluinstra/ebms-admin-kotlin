@@ -58,3 +58,9 @@ html {
   --lumo-success-color: #54DE6E;
   --lumo-header-text-color: #b7830b;
 }
+
+vaadin-button,
+ .pointer {
+  --lumo-clickable-cursor: pointer;
+  cursor: var(--lumo-clickable-cursor);
+}

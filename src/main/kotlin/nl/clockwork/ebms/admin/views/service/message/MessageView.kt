@@ -13,6 +13,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.*
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
+import nl.clockwork.ebms.admin.components.aLabel
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.confirmDialog
 import nl.clockwork.ebms.admin.components.downloadButton
@@ -83,15 +84,8 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
     private fun FormLayout.dataSources(attachments: List<DataSource>): Component =
         verticalLayout() {
             setColspan(this, 2)
-            add(formLabel(getTranslation("lbl.attachments")))
+            add(aLabel(getTranslation("lbl.attachments")))
             add(dataSourceTable(attachments))
-        }
-
-    private fun FormLayout.formLabel(label: String): Label =
-        label(label) {
-            element.style.set("font-size", "14px")
-            element.style.set("font-weight", "400")
-            element.style.set("color", "#bbb")
         }
 
     private fun FormLayout.dataSourceTable(attachments: List<DataSource>): Component =
@@ -143,8 +137,9 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
         }
 
     companion object {
-        fun messageIdLink(): ComponentRenderer<RouterLink, String> =
-            ComponentRenderer { messageId -> messageRouterLink(messageId) }
+        fun navigateTo(messageId: String) {
+            messageRouterLink(messageId).navigateTo()
+        }
 
         private fun messageRouterLink(messageId: String): RouterLink =
             RouterLink(messageId, MessageView::class.java, RouteParameters("messageId", messageId))

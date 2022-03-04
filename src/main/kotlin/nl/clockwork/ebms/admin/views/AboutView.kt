@@ -27,7 +27,9 @@ class AboutView : KComposite() {
     private fun @VaadinDsl Accordion.versionsPanel() {
         panel {
             summary {
-                button { text = getTranslation("versions") }
+                horizontalLayout {
+                    text(getTranslation("versions"))
+                }
             }
             content {
                 verticalLayout {
@@ -41,7 +43,9 @@ class AboutView : KComposite() {
     private fun @VaadinDsl Accordion.licensePanel() {
         panel {
             summary {
-                button { text = getTranslation("license") }
+                horizontalLayout {
+                    text(getTranslation("license"))
+                }
             }
             content {
                 pre(
