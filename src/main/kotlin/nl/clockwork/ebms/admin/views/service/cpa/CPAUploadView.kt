@@ -6,6 +6,7 @@ import com.vaadin.flow.component.ComponentEventListener
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.formlayout.FormLayout
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -33,7 +34,7 @@ class CPAUploadView : KComposite(), WithBean {
         //TODO use binder
         val memoryBuffer = MemoryBuffer()
         return formLayout {
-            val uploadButton = createButton(getTranslation("cmd.upload"), 1) {
+            val uploadButton = createButton(getTranslation("cmd.upload"), Icon("lumo", "upload"), 1) {
                 isEnabled = formData.cpaFile != null
                 addClickListener {
                     formData.cpaFile?.let { cpaClient.insertCPA(String(it.readAllBytes()), formData.overwrite) }
@@ -62,10 +63,11 @@ class CPAUploadView : KComposite(), WithBean {
 
     private fun FormLayout.createButton(
         label: String,
+        icon: Icon,
         colspan: Int,
         clickListener: ComponentEventListener<ClickEvent<Button>>
     ): Button =
-        button(label) {
+        button(label, icon) {
             setColspan(this, colspan)
             text = label
             addClickListener(clickListener)

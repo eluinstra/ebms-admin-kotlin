@@ -4,6 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.data.renderer.ComponentRenderer
@@ -92,6 +93,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
         Grid(DeliveryLog::class.java, false).apply {
             isAllRowsVisible = true
             setItems(deliveryLogs)
+            addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
             addColumn("timestamp").setHeader(getTranslation("lbl.timestamp"))
             addColumn("uri").setHeader(getTranslation("lbl.uri"))
             addColumn("status").setHeader(getTranslation("lbl.status"))
@@ -109,6 +111,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
         Grid<EbMSAttachment>(EbMSAttachment::class.java, false).apply {
             isAllRowsVisible = true
             setItems(attachments)
+            addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
             addColumn("name").setHeader(getTranslation("lbl.name"))
             addColumn("contentId").setHeader(getTranslation("lbl.contentId"))
             addColumn("contentType").setHeader(getTranslation("lbl.contentType"))

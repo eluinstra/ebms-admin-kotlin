@@ -1,7 +1,6 @@
 package nl.clockwork.ebms.admin.views.message
 
 import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.karibudsl.v10.formLayout
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.ComponentEventListener
@@ -11,6 +10,7 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datetimepicker.DateTimePicker
 import com.vaadin.flow.component.formlayout.FormLayout
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.listbox.MultiSelectListBox
 import com.vaadin.flow.data.provider.DataProvider
 import nl.clockwork.ebms.EbMSMessageStatus
@@ -53,12 +53,12 @@ object SearchFilter : WithBean {
             DateTimeSelect(getTranslation("lbl.fromDate"), getTranslation("lbl.fromTime"),1)
 //            createDateTimePicker(getTranslation("lbl.to"),1)
             DateTimeSelect(getTranslation("lbl.toDate"), getTranslation("lbl.toTime"),1)
-            createButton(getTranslation("cmd.search"), 1) {
+            createButton(getTranslation("cmd.search"), Icon("lumo", "search"), 1) {
                 binder.writeBeanIfValid(messageFilter);
                 dataProvider.refreshAll();
                 hideFilter.run();
             }
-            createButton(getTranslation("cmd.reset"),1) {
+            createButton(getTranslation("cmd.reset"), Icon("lumo", "reload"),1) {
 // TODO: fix                messageFilter.reset();
                 binder.readBean(messageFilter);
                 dataProvider.refreshAll();
@@ -82,10 +82,11 @@ object SearchFilter : WithBean {
 
     private fun FormLayout.createButton(
         label: String,
+        icon: Icon,
         colspan: Int,
         clickListener: ComponentEventListener<ClickEvent<Button>>
     ): Button =
-        button(label) {
+        button(label, icon) {
             setColspan(this, colspan)
             text = label
             addClickListener(clickListener)

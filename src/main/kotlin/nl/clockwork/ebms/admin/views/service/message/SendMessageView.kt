@@ -6,6 +6,7 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -175,7 +176,7 @@ class SendMessageView : KComposite(), WithBean {
     }
 
     private fun @VaadinDsl HorizontalLayout.sendButton(text: String) =
-        button(text) {
+        button(text, Icon("lumo", "checkmark")) {
             isEnabled = false
             onLeftClick {
                 val formData = SendMessageFormData()

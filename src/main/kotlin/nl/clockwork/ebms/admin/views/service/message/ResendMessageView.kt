@@ -2,6 +2,7 @@ package nl.clockwork.ebms.admin.views.service.message
 
 import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -42,7 +43,7 @@ class ResendMessageView : KComposite(), WithBean {
     }
 
     private fun @VaadinDsl HorizontalLayout.resendButton(text: String?) {
-        button(text) {
+        button(text, Icon("lumo", "checkmark")) {
             onLeftClick {
                 val formData = ResendMessageFormData()
                 if (binder.writeBeanIfValid(formData)) {

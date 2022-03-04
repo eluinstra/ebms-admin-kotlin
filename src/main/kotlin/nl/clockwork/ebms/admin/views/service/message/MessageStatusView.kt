@@ -2,6 +2,7 @@ package nl.clockwork.ebms.admin.views.service.message
 
 import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -41,7 +42,7 @@ class MessageStatusView : KComposite(), WithBean {
     }
 
     private fun @VaadinDsl HorizontalLayout.messageStatusButton(text: String?) {
-        button(text) {
+        button(text, Icon("lumo", "checkmark")) {
             onLeftClick {
                 val formData = MessageStatusFormData()
                 if (binder.writeBeanIfValid(formData)) {

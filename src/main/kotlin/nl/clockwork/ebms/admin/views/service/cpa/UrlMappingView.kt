@@ -4,7 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setPrimary
 import com.vaadin.flow.component.HasComponents
-import com.vaadin.flow.data.binder.BeanValidationBinder
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.*
 import nl.clockwork.ebms.admin.components.backButton
@@ -54,7 +54,7 @@ class CreateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
     }
 
     private fun HasComponents.saveButton(text: String?) =
-        button(text) {
+        button(text, Icon("lumo", "checkmark")) {
             onLeftClick {
                 val urlMapping = UrlMapping()
                 if (binder.writeBeanIfValid(urlMapping)) {
@@ -93,8 +93,8 @@ class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
         with (root) {
             urlMapping?.let { urlMappingForm(it.toUrlMapping()) } ?: text(getTranslation("urlMappingNotFound"))
             horizontalLayout {
-                saveButton(getTranslation("cmd.set"))
                 backButton(getTranslation("cmd.back"))
+                saveButton(getTranslation("cmd.set"))
             }
         }
     }
@@ -123,7 +123,7 @@ class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
     }
 
     private fun HasComponents.saveButton(text: String?) =
-        button(text) {
+        button(text, Icon("lumo", "checkmark")) {
             onLeftClick {
                 val urlMapping = UrlMapping()
                 if (binder.writeBeanIfValid(urlMapping)) {

@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Anchor
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.AfterNavigationEvent
@@ -48,6 +49,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                 backButton(getTranslation("cmd.back"))
                 button {
                     text = getTranslation("cmd.new")
+                    icon = Icon("lumo", "edit")
                     onLeftClick {
                         navigateTo(CPAUploadView::class)
                     }
@@ -70,7 +72,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
 
     private fun delete(text: String) : ComponentRenderer<Button, String> =
         ComponentRenderer {
-            cpaId -> Button(text).apply {
+            cpaId -> Button(text, Icon("lumo", "cross")).apply {
                 addThemeVariants(ButtonVariant.LUMO_SMALL)
                 addClickListener {
                     confirmDialog {

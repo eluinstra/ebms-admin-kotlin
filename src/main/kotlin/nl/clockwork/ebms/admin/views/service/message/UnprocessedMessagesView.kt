@@ -2,6 +2,7 @@ package nl.clockwork.ebms.admin.views.service.message
 
 import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -27,6 +28,7 @@ class UnprocessedMessagesView : KComposite(), WithBean {
             grid = grid(messageIdDataProvider()) {
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
+                addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
                 addColumn(MessageView.messageIdLink()).setHeader(getTranslation("lbl.messageId"))
             }
             horizontalLayout {

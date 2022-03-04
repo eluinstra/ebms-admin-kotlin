@@ -5,7 +5,9 @@ import com.github.mvysny.kaributools.navigateTo
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Label
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.*
@@ -46,7 +48,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
                 horizontalLayout {
                     backButton(getTranslation("cmd.back"))
                     downloadButton(getTranslation("cmd.download"), StreamResource("message.${message.properties.messageId}.zip", createZip(message)))
-                    button(getTranslation("cmd.process")) {
+                    button(getTranslation("cmd.process"), Icon("lumo", "checkmark")) {
                         onLeftClick {
                             confirmDialog {
                                 ebMSMessageClient.processMessage(messageId)
@@ -96,6 +98,7 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
         Grid<DataSource>(DataSource::class.java, false).apply {
             isAllRowsVisible = true
             setItems(attachments)
+            addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
             addColumn("attachment.name").setHeader(getTranslation("lbl.name"))
 //            addColumn("attachment.contentId").setHeader(getTranslation("lbl.contentId"))
             addColumn("attachment.contentType").setHeader(getTranslation("lbl.contentType"))

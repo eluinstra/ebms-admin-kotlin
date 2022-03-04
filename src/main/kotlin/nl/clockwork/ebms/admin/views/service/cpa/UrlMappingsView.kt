@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
@@ -40,6 +41,7 @@ class UrlMappingsView : KComposite(), WithBean {
                 backButton(getTranslation("cmd.back"))
                 button {
                     text = getTranslation("cmd.new")
+                    icon = Icon("lumo", "edit")
                     onLeftClick {
                         navigateTo(CreateUrlMappingView::class)
                     }
@@ -50,7 +52,7 @@ class UrlMappingsView : KComposite(), WithBean {
 
     private fun delete(text: String) : ComponentRenderer<Button, UrlMapping> =
         ComponentRenderer {
-            urlMapping -> Button(text).apply {
+            urlMapping -> Button(text, Icon("lumo", "cross")).apply {
                 addThemeVariants(ButtonVariant.LUMO_SMALL)
                 addClickListener {
                     confirmDialog {

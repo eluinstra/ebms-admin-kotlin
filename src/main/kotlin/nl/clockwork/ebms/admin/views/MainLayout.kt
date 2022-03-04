@@ -4,6 +4,9 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.vaadin.flow.component.contextmenu.MenuItem
 import com.vaadin.flow.component.dependency.CssImport
+import com.vaadin.flow.component.icon.Icon
+import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.menubar.MenuBarVariant
 import com.vaadin.flow.router.RouterLayout
 import nl.clockwork.ebms.admin.views.cpa.CpasView
 import nl.clockwork.ebms.admin.views.message.MessagesView
@@ -15,13 +18,17 @@ import nl.clockwork.ebms.admin.views.service.cpa.CpasView as CpaServiceView
 
 //@Viewport(Viewport.DEVICE_DIMENSIONS)
 @CssImport("./styles/custom-lumo-theme.css")
-@CssImport("./styles/custom-styles.css")
+@CssImport("./styles/custom-material-theme.css")
 class MainLayout : KComposite(), RouterLayout {
     private val root = ui {
         appLayout {
             navbar {
                 menuBar {
-                    item(getTranslation("home"), { navigateTo(HomeView::class) })
+                    addThemeVariants(MenuBarVariant.LUMO_ICON)
+                    item("", { navigateTo(HomeView::class) }) {
+                        icon(VaadinIcon.HOME_O)
+                        text(getTranslation("home"))
+                    }
                     item(getTranslation("cpaService")) {
                         item(getTranslation("cpas"), { navigateTo(CpaServiceView::class) })
                         separator()
@@ -46,7 +53,10 @@ class MainLayout : KComposite(), RouterLayout {
                         item(getTranslation("cpas"), { navigateTo(CpasView::class) })
                         item(getTranslation("messages"), { navigateTo(MessagesView::class) })
                     }
-                    item(getTranslation("about"), { navigateTo(AboutView::class) })
+                    item("", { navigateTo(AboutView::class) }) {
+                        icon(VaadinIcon.INFO_CIRCLE_O)
+                        text(getTranslation("about"))
+                    }
                 }
             }
         }

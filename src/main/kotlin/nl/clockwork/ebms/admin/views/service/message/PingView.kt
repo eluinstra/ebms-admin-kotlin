@@ -6,6 +6,7 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -55,7 +56,7 @@ class PingView : KComposite(), WithBean {
         }
         horizontalLayout {
             backButton(getTranslation("cmd.back"))
-            submitButton = saveButton(getTranslation("cmd.ping"))
+            submitButton = pingButton(getTranslation("cmd.ping"))
             resetButton(getTranslation("cmd.reset"), binder)
         }
     }
@@ -93,8 +94,8 @@ class PingView : KComposite(), WithBean {
         submitButton.isEnabled = e?.value != null
     }
 
-    private fun @VaadinDsl HorizontalLayout.saveButton(text: String?) =
-        button(text) {
+    private fun @VaadinDsl HorizontalLayout.pingButton(text: String?) =
+        button(text, Icon("lumo", "checkmark")) {
             isEnabled = false
             onLeftClick {
                 val pingFormData = PingFormData()
