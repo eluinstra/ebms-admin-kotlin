@@ -45,8 +45,7 @@ class CpaView : KComposite(), BeforeEnterObserver, WithBean {
             }
             textArea {
                 colspan = 2
-//                element.setAttribute("rows","40");
-                height = "600px"
+                maxHeight = "800px"
                 isReadOnly = true
                 value = cpa.cpa
             }

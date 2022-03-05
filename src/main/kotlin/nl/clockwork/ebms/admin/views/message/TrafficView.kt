@@ -71,7 +71,12 @@ class TrafficView : KComposite(), WithBean, WithDate {
             gridContextMenu() {
                 item(getTranslation("cmd.details")) {
                     addMenuItemClickListener {
-                        e -> MessageView.navigateTo(e.item.get().messageId)
+                        e -> messageDialog(e.item.get()).open()
+                    }
+                }
+                item(getTranslation("cmd.details")) {
+                    addMenuItemClickListener {
+                            e -> MessageView.navigateTo(e.item.get().messageId)
                     }
                 }
             }

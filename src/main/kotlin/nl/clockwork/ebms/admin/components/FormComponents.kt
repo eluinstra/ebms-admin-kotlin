@@ -23,15 +23,6 @@ fun FormLayout.aTextField(label: String, colspan: Int = 2, block: (@VaadinDsl Te
         block()
     }
 
-fun FormLayout.aROTextField(label: String, value: String?, colspan: Int = 2, block: (@VaadinDsl TextField).() -> Unit = {}): TextField =
-    textField(label) {
-        setColspan(this, colspan)
-        isClearButtonVisible = true
-        setValue(value ?: "")
-        isReadOnly = true
-        block()
-    }
-
 fun FormLayout.aComboBox(label: String, items: List<String>, colspan: Int = 2, block: (@VaadinDsl ComboBox<String>).() -> Unit = {}): ComboBox<String> =
     comboBox(label) {
         setColspan(this, colspan)
@@ -40,4 +31,3 @@ fun FormLayout.aComboBox(label: String, items: List<String>, colspan: Int = 2, b
         isEnabled = items != emptyList<Any>()
         block()
     }
-

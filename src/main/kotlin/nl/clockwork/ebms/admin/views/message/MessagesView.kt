@@ -72,6 +72,18 @@ class MessagesView : KComposite(), WithBean, WithDate {
 
     private fun HasComponents.createMessageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
         grid(dataProvider) {
+            gridContextMenu() {
+                item(getTranslation("cmd.details")) {
+                    addMenuItemClickListener {
+                            e -> messageDialog(e.item.get()).open()
+                    }
+                }
+                item(getTranslation("cmd.details")) {
+                    addMenuItemClickListener {
+                            e -> MessageView.navigateTo(e.item.get().messageId)
+                    }
+                }
+            }
             setSelectionMode(NONE)
 //            addItemClickListener {
 //                MessageView.navigateTo(it.item.messageId)
