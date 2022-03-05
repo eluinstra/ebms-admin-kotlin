@@ -15,6 +15,7 @@ import nl.clockwork.ebms.admin.DeliveryTask
 import nl.clockwork.ebms.admin.EbMSAttachment
 import nl.clockwork.ebms.admin.EbMSMessage
 import nl.clockwork.ebms.admin.components.aLabel
+import nl.clockwork.ebms.admin.components.aROTextField
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
@@ -120,5 +121,35 @@ class MessageView : KComposite(), BeforeEnterObserver, WithBean {
 
         private fun messageRouterLink(messageId: String): RouterLink =
             RouterLink(messageId, MessageView::class.java, RouteParameters("messageId", messageId))
+    }
+}
+
+fun createMessageDetailsRenderer(): ComponentRenderer<MessageForm, EbMSMessage> =
+    ComponentRenderer {
+            message -> MessageForm(message)
+    }
+
+class MessageForm(message: EbMSMessage) : FormLayout() {
+    init {
+        setResponsiveSteps(ResponsiveStep("0", 4))
+        with(message) {
+            add(aROTextField(getTranslation("lbl.messageId"), messageId))
+            add(aROTextField(getTranslation("lbl.messageNr"), messageNr.toString()))
+            add(aROTextField(getTranslation("lbl.conversationId"), conversationId))
+            add(aROTextField(getTranslation("lbl.refToMessageId"), refToMessageId))
+            add(aROTextField(getTranslation("lbl.timestamp"), timestamp.toString()))
+            add(aROTextField(getTranslation("lbl.cpaId"), cpaId))
+            add(aROTextField(getTranslation("lbl.fromPartyId"), fromPartyId))
+            add(aROTextField(getTranslation("lbl.fromRole"), fromRole))
+            add(aROTextField(getTranslation("lbl.toPartyId"), toPartyId))
+            add(aROTextField(getTranslation("lbl.toRole"), toRole))
+            add(aROTextField(getTranslation("lbl.service"), service))
+            add(aROTextField(getTranslation("lbl.action"), action))
+            add(aROTextField(getTranslation("lbl.status"), status?.name))
+            add(aROTextField(getTranslation("lbl.statusTime"), statusTime?.toString()))
+//            message.deliveryTask?.let { deliveryTasks(it) }
+//            deliveryLogs(deliveryLogs)
+//            attachments(attachments)
+        }
     }
 }

@@ -9,21 +9,30 @@ import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.textfield.TextField
 
-fun FormLayout.aLabel(label: String): Label =
+fun FormLayout.aLabel(label: String, colspan: Int = 2, block: (@VaadinDsl Label).() -> Unit = {}): Label =
     label(label) {
         element.style.set("font-size", "13px")
         element.style.set("font-weight", "400")
         element.style.set("color", "#666")
     }
 
-fun FormLayout.aTextField(label: String, colspan: Int, block: (@VaadinDsl TextField).() -> Unit = {}): TextField =
+fun FormLayout.aTextField(label: String, colspan: Int = 2, block: (@VaadinDsl TextField).() -> Unit = {}): TextField =
     textField(label) {
         setColspan(this, colspan)
         isClearButtonVisible = true
         block()
     }
 
-fun FormLayout.aComboBox(label: String, items: List<String>, colspan: Int, block: (@VaadinDsl ComboBox<String>).() -> Unit = {}): ComboBox<String> =
+fun FormLayout.aROTextField(label: String, value: String?, colspan: Int = 2, block: (@VaadinDsl TextField).() -> Unit = {}): TextField =
+    textField(label) {
+        setColspan(this, colspan)
+        isClearButtonVisible = true
+        setValue(value ?: "")
+        isReadOnly = true
+        block()
+    }
+
+fun FormLayout.aComboBox(label: String, items: List<String>, colspan: Int = 2, block: (@VaadinDsl ComboBox<String>).() -> Unit = {}): ComboBox<String> =
     comboBox(label) {
         setColspan(this, colspan)
         setItems(items)

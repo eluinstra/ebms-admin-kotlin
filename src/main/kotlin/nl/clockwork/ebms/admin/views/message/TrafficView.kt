@@ -68,10 +68,18 @@ class TrafficView : KComposite(), WithBean, WithDate {
 
     private fun HasComponents.messageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
         grid(dataProvider) {
-            setSelectionMode(NONE)
-            addItemClickListener {
-                MessageView.navigateTo(it.item.messageId)
+            gridContextMenu() {
+                item(getTranslation("cmd.details")) {
+                    addMenuItemClickListener {
+                        e -> MessageView.navigateTo(e.item.get().messageId)
+                    }
+                }
             }
+            setSelectionMode(NONE)
+            setClassNameGenerator { Utils.getTableRowCssClass(it.status) }
+//            addItemClickListener {
+//                MessageView.navigateTo(it.item.messageId)
+//            }
             addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
             addColumn("messageId").apply {
                 setHeader(getTranslation("lbl.messageId"))
@@ -118,7 +126,7 @@ class TrafficView : KComposite(), WithBean, WithDate {
                 setHeader(getTranslation("lbl.statusTime"))
                 isAutoWidth = true
             }
-            setClassNameGenerator { Utils.getTableRowCssClass(it.status) }
+            setItemDetailsRenderer(createMessageDetailsRenderer())
         }
 
 }

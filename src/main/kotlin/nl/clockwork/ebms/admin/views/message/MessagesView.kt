@@ -73,9 +73,9 @@ class MessagesView : KComposite(), WithBean, WithDate {
     private fun HasComponents.createMessageGrid(dataProvider: DataProvider<EbMSMessage, *>): Component =
         grid(dataProvider) {
             setSelectionMode(NONE)
-            addItemClickListener {
-                MessageView.navigateTo(it.item.messageId)
-            }
+//            addItemClickListener {
+//                MessageView.navigateTo(it.item.messageId)
+//            }
             addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
             addColumn("messageId").apply {
                 setHeader(getTranslation("lbl.messageId"))
@@ -135,6 +135,7 @@ class MessagesView : KComposite(), WithBean, WithDate {
                 setHeader(getTranslation("lbl.statusTime"))
                 isAutoWidth = true
             }
+            setItemDetailsRenderer(createMessageDetailsRenderer())
         }
 
     private fun createCsv(): InputStreamFactory =
