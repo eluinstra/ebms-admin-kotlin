@@ -53,11 +53,11 @@ data class DeliveryLog(
 )
 
 class EbMSMessageFilter(
-    val messageNr: Int? = null,
-    val serviceMessage: Boolean? = null,
-    val statuses: Set<EbMSMessageStatus> = emptySet(),
-    val from: LocalDateTime? = null,
-    val to: LocalDateTime? = null,
+    var messageNr: Int? = 0,
+    var serviceMessage: Boolean? = false,
+    var statuses: Set<EbMSMessageStatus> = emptySet(),
+    var from: LocalDateTime? = null,
+    var to: LocalDateTime? = null,
     cpaId: String? = null,
     fromParty: Party? = null,
     toParty: Party? = null,

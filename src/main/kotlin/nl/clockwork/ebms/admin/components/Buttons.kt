@@ -17,10 +17,11 @@ fun (@VaadinDsl HasComponents).backButton(text: String) : Button =
         }
     }
 
-fun @VaadinDsl HasComponents.resetButton(text: String?, beanValidationBinder: BeanValidationBinder<*>) =
+fun @VaadinDsl HasComponents.resetButton(text: String?, beanValidationBinder: BeanValidationBinder<*>, block: () -> Unit = {}) =
     button(text, Icon("lumo", "reload")) {
         onLeftClick {
             beanValidationBinder.fields.forEach { it.clear() }
+            block()
         }
     }
 

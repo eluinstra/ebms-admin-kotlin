@@ -19,7 +19,6 @@ import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.Utils
 import nl.clockwork.ebms.admin.views.WithBean
-import nl.clockwork.ebms.admin.views.message.SearchFilter.searchFilter
 
 
 @Route(value = "traffic", layout = MainLayout::class)
@@ -41,8 +40,8 @@ class TrafficView : KComposite(), WithBean, WithDate {
         }
     }
 
-    private fun messageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> {
-        return DataProvider.fromCallbacks(
+    private fun messageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> =
+        DataProvider.fromCallbacks(
             { query: Query<EbMSMessage, Void> ->
                 ebMSAdminDAO.selectMessages(
                     messageFilter,
@@ -50,9 +49,8 @@ class TrafficView : KComposite(), WithBean, WithDate {
                     query.limit
                 ).stream()
             },
-            { ebMSAdminDAO.countMessages(messageFilter).toInt()}
+            { ebMSAdminDAO.countMessages(messageFilter).toInt() }
         )
-    }
 
     private fun HasComponents.searchFilterDetails(
         label: String,
@@ -62,7 +60,11 @@ class TrafficView : KComposite(), WithBean, WithDate {
         details(label) {
             isOpened = false
             content {
-                searchFilter(messageFilter, dataProvider) { }
+                add(SearchFilter(messageFilter) {
+                    dataProvider.refreshAll()
+                    //TODO grid refresh
+                    this@details.isOpened = false
+                })
             }
         }
 
@@ -74,17 +76,9 @@ class TrafficView : KComposite(), WithBean, WithDate {
                         e -> messageDialog(e.item.get()).open()
                     }
                 }
-                item(getTranslation("cmd.details")) {
-                    addMenuItemClickListener {
-                            e -> MessageView.navigateTo(e.item.get().messageId)
-                    }
-                }
             }
             setSelectionMode(NONE)
             setClassNameGenerator { Utils.getTableRowCssClass(it.status) }
-//            addItemClickListener {
-//                MessageView.navigateTo(it.item.messageId)
-//            }
             addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER)
             addColumn("messageId").apply {
                 setHeader(getTranslation("lbl.messageId"))

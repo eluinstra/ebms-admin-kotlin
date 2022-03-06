@@ -21,7 +21,6 @@ import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.downloadButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
-import nl.clockwork.ebms.admin.views.message.SearchFilter.searchFilter
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.cxf.io.CachedOutputStream
@@ -66,7 +65,10 @@ class MessagesView : KComposite(), WithBean, WithDate {
         details(label) {
             isOpened = false
             content {
-                searchFilter(messageFilter, dataProvider) { }
+                add(SearchFilter(messageFilter) {
+                    dataProvider.refreshAll()
+                    //TODO grid refresh
+                })
             }
         }
 
@@ -78,16 +80,8 @@ class MessagesView : KComposite(), WithBean, WithDate {
                             e -> messageDialog(e.item.get()).open()
                     }
                 }
-                item(getTranslation("cmd.details")) {
-                    addMenuItemClickListener {
-                            e -> MessageView.navigateTo(e.item.get().messageId)
-                    }
-                }
             }
             setSelectionMode(NONE)
-//            addItemClickListener {
-//                MessageView.navigateTo(it.item.messageId)
-//            }
             addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
             addColumn("messageId").apply {
                 setHeader(getTranslation("lbl.messageId"))

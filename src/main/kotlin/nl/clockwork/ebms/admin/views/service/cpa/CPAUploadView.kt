@@ -2,8 +2,6 @@ package nl.clockwork.ebms.admin.views.service.cpa
 
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
-import com.vaadin.flow.component.ClickEvent
-import com.vaadin.flow.component.ComponentEventListener
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.formlayout.FormLayout
@@ -15,7 +13,6 @@ import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.components.showSuccessNotification
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
-import java.io.InputStream
 import javax.validation.constraints.NotEmpty
 
 
@@ -41,7 +38,7 @@ class CPAUploadView : KComposite(), WithBean {
         //TODO use binder
         val memoryBuffer = MemoryBuffer()
         return formLayout {
-            uploadButton1 = createButton(getTranslation("cmd.upload"), Icon("lumo", "upload"), 1) {
+            uploadButton1 = aButton(getTranslation("cmd.upload"), Icon("lumo", "upload"), 1) {
                 isEnabled = false
                 addClickListener {
                     formData.cpaFile?.let { cpaClient.insertCPA(String(formData.cpaFile!!), formData.overwrite) }
@@ -68,7 +65,7 @@ class CPAUploadView : KComposite(), WithBean {
         }
     }
 
-    private fun FormLayout.createButton(
+    private fun FormLayout.aButton(
         label: String,
         icon: Icon,
         colspan: Int,
