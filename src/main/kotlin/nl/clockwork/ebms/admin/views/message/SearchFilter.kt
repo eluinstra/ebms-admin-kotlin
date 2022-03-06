@@ -42,7 +42,7 @@ class SearchFilter(
             binder.readBean(SearchFilterFormData())
             //TODO use binder
             formLayout {
-                cpaIdSelect = aComboBox(getTranslation("lbl.cpaId"), cpaClient.cpaIds,2) {
+                cpaIdSelect = aComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO.selectCPAIds(),2) {
                     bind(binder).bind(SearchFilterFormData::cpaId)
                     addValueChangeListener { onCpaIdSelected(it) }
                 }
@@ -133,7 +133,7 @@ class SearchFilter(
 
     private fun getCpa(cpaId: String) =
         JAXBParser.getInstance(CollaborationProtocolAgreement::class.java)
-            .handleUnsafe(cpaClient.getCPA(cpaId))
+            .handleUnsafe(ebMSAdminDAO.findCPA(cpaId)?.cpa)
 
     private fun ComboBox<*>.disable() {
         setItems(emptyList())

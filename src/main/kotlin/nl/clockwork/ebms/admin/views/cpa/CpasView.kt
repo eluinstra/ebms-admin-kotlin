@@ -1,9 +1,6 @@
 package nl.clockwork.ebms.admin.views.cpa
 
-import com.github.mvysny.karibudsl.v10.KComposite
-import com.github.mvysny.karibudsl.v10.grid
-import com.github.mvysny.karibudsl.v10.h2
-import com.github.mvysny.karibudsl.v10.verticalLayout
+import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
@@ -14,6 +11,7 @@ import nl.clockwork.ebms.admin.Cpa
 import nl.clockwork.ebms.admin.components.backButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
+import nl.clockwork.ebms.admin.views.message.messageDialog
 
 
 @Route(value = "cpa", layout = MainLayout::class)
@@ -23,10 +21,14 @@ class CpasView : KComposite(), WithBean {
         verticalLayout {
             h2(getTranslation("cpas"))
             grid(cpaDataProvider()) {
-                setSelectionMode(SelectionMode.NONE)
-                addItemClickListener {
-                    CpaView.navigateTo(it.item.cpaId)
+                gridContextMenu() {
+                    item(getTranslation("cmd.details")) {
+                        addMenuItemClickListener {
+                                e -> cpaDialog(e.item.get()).open()
+                        }
+                    }
                 }
+                setSelectionMode(SelectionMode.NONE)
                 addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
                 addColumn("cpaId").setHeader(getTranslation("lbl.cpaId"))
             }

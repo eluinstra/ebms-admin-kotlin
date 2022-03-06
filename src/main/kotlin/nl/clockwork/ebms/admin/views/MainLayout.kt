@@ -25,7 +25,8 @@ class MainLayout : KComposite(), RouterLayout {
         appLayout {
             navbar {
                 menuBar {
-                    addThemeVariants(MenuBarVariant.LUMO_ICON)
+                    isOpenOnHover = true
+                    addThemeVariants(MenuBarVariant.LUMO_TERTIARY, MenuBarVariant.LUMO_ICON)
                     item("", { navigateTo(HomeView::class) }) {
                         icon(VaadinIcon.HOME_O)
                         text(getTranslation("home"))

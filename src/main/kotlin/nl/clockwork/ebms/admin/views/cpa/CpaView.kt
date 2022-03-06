@@ -2,6 +2,8 @@ package nl.clockwork.ebms.admin.views.cpa
 
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
+import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.*
@@ -11,27 +13,12 @@ import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 
 
-@Route(value = "cpa/:cpaId", layout = MainLayout::class)
-@PageTitle("CPA")
-class CpaView : KComposite(), BeforeEnterObserver, WithBean {
-    private val root = ui {
-        verticalLayout {
-            h2(getTranslation("cpa"))
-        }
-    }
-
-    override fun beforeEnter(event: BeforeEnterEvent?) {
-        val cpaId = event?.routeParameters?.get("cpaId")?.orElse(null)
-        val cpa = cpaId?.let { ebMSAdminDAO.findCPA(it) }
-        with (root) {
-            cpa?.let { cpaForm(it) } ?: text("CPA not found")
-            backButton(getTranslation("cmd.back"))
-        }
-    }
-
-    private fun VerticalLayout.cpaForm(cpa: Cpa) =
+fun cpaDialog(cpa: Cpa) =
+    Dialog().apply {
+        width = "80%"
+//        height = "80%"
         formLayout {
-            setSizeFull()
+            setResponsiveSteps(FormLayout.ResponsiveStep("0", 2))
             label(getTranslation("lbl.cpaId")) {
                 colspan = 2
             }
@@ -49,14 +36,8 @@ class CpaView : KComposite(), BeforeEnterObserver, WithBean {
                 isReadOnly = true
                 value = cpa.cpa
             }
+            button(getTranslation("cmd.close")) {
+                addClickListener{ _ -> this@apply.close() }
+            }
         }
-
-    companion object {
-        fun navigateTo(cpaId: String) {
-            cpaRouterLink(cpaId).navigateTo()
-        }
-
-        private fun cpaRouterLink(cpaId: String): RouterLink =
-            RouterLink(cpaId, CpaView::class.java, RouteParameters("cpaId", cpaId))
     }
-}
