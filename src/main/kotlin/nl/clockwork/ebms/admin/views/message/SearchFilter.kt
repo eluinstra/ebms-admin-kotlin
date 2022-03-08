@@ -113,7 +113,8 @@ class SearchFilter(
                         }
                     }
                 }
-                resetButton(getTranslation("cmd.reset"), binder) {
+                resetButton(getTranslation("cmd.reset")) {
+                    binder.readBean(SearchFilterFormData())
                     refresh()
                 }
             }

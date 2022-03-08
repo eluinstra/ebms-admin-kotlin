@@ -87,7 +87,9 @@ class SendMessageView : KComposite(), WithBean {
         horizontalLayout {
             backButton(getTranslation("cmd.back"))
             submitButton = sendButton(getTranslation("cmd.send"))
-            resetButton(getTranslation("cmd.reset"), binder)
+            resetButton(getTranslation("cmd.reset")) {
+                binder.readBean(SendMessageFormData())
+            }
         }
     }
 

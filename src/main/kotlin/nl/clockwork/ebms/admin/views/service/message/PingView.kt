@@ -57,7 +57,9 @@ class PingView : KComposite(), WithBean {
         horizontalLayout {
             backButton(getTranslation("cmd.back"))
             submitButton = pingButton(getTranslation("cmd.ping"))
-            resetButton(getTranslation("cmd.reset"), binder)
+            resetButton(getTranslation("cmd.reset")) {
+                binder.readBean(PingFormData())
+            }
         }
     }
 
