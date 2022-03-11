@@ -3,6 +3,7 @@
 ## Todo:
 - details/edit inline in grid or in a dialog instead of on separate detail pages
 - grid functions per row in context menu (available on right click)
+- move search criteria to popup
 - custom error page
 - admin properties page
 

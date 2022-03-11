@@ -42,6 +42,7 @@ class SearchFilter(
             binder.readBean(SearchFilterFormData())
             //TODO use binder
             formLayout {
+                classNames.add("panel")
                 cpaIdSelect = aComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO.selectCPAIds(),2) {
                     bind(binder).bind(SearchFilterFormData::cpaId)
                     addValueChangeListener { onCpaIdSelected(it) }
