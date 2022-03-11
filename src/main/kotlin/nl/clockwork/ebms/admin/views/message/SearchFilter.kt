@@ -121,16 +121,18 @@ class SearchFilter(
             }
         }
 
-    companion object {
-        private val logger: Logger = LoggerFactory.getLogger(SearchFilter::class.java)
-    }
-
     private fun onCpaIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
             fromPartyIdSelect.isEnabled = true
             fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(it)))
-        } ?: fromPartyIdSelect.disable()
+            toPartyIdSelect.isEnabled = true
+            toPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(it)))
+        } ?: run {
+            fromPartyIdSelect.disable()
+            toPartyIdSelect.disable()
+        }
         onFromPartyIdSelected(null)
+        onToPartyIdSelected(null)
     }
 
     private fun getCpa(cpaId: String) =
@@ -146,24 +148,39 @@ class SearchFilter(
         e?.value?.let {
             fromRoleSelect.isEnabled = true
             fromRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
+            toPartyIdSelect.disable()
 
-        } ?: fromRoleSelect.disable()
+        } ?: run {
+            fromRoleSelect.disable()
+            toPartyIdSelect.isEnabled = true
+            toPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+        }
         onFromRoleSelected(null)
     }
 
     private fun onFromRoleSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
         e?.value?.let {
-            toPartyIdSelect.isEnabled = true
-            toPartyIdSelect.setItems(CPAUtils.getOtherPartyIds(getCpa(cpaIdSelect.value), fromPartyIdSelect.value))
-        } ?: toPartyIdSelect.disable()
-        onToPartyIdSelected(null)
+            serviceSelect.isEnabled = true
+            serviceSelect.setItems(
+                CPAUtils.getServiceNamesCanSend(
+                    getCpa(cpaIdSelect.value),
+                    fromPartyIdSelect.value,
+                    fromRoleSelect.value
+                ))
+        } ?: serviceSelect.disable()
+        onServiceSelected(null)
     }
 
     private fun onToPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
         e?.value?.let {
             toRoleSelect.isEnabled = true
             toRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
-        } ?: toRoleSelect.disable()
+            fromPartyIdSelect.disable()
+        } ?: run {
+            toRoleSelect.disable()
+            fromPartyIdSelect.isEnabled = true
+            fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+        }
         onToRoleSelected(null)
     }
 
@@ -171,17 +188,11 @@ class SearchFilter(
         e?.value?.let {
             serviceSelect.isEnabled = true
             serviceSelect.setItems(
-                CPAUtils.getServiceNamesCanSend(
-                getCpa(cpaIdSelect.value),
-                fromPartyIdSelect.value,
-                fromRoleSelect.value
-            ).intersect(
                 CPAUtils.getServiceNamesCanReceive(
                     getCpa(cpaIdSelect.value),
                     toPartyIdSelect.value,
                     toRoleSelect.value
-                ).toSet()
-            ))
+                ))
         } ?: serviceSelect.disable()
         onServiceSelected(null)
     }
@@ -190,18 +201,17 @@ class SearchFilter(
         e?.value?.let {
             actionSelect.isEnabled = true
             actionSelect.setItems(
-                CPAUtils.getFromActionNamesCanSend(
-                getCpa(cpaIdSelect.value),
-                fromPartyIdSelect.value,
-                fromRoleSelect.value,
-                serviceSelect.value
-            ).intersect(
-                CPAUtils.getFromActionNamesCanReceive(
+                fromRoleSelect.value?.let {
+                    CPAUtils.getFromActionNamesCanSend(
+                    getCpa(cpaIdSelect.value),
+                    fromPartyIdSelect.value,
+                    fromRoleSelect.value,
+                    serviceSelect.value)
+                } ?: CPAUtils.getFromActionNamesCanReceive(
                     getCpa(cpaIdSelect.value),
                     toPartyIdSelect.value,
                     toRoleSelect.value,
                     serviceSelect.value
-                ).toSet()
             ))
         } ?: actionSelect.disable()
         onActionSelected(null)
@@ -252,6 +262,10 @@ class SearchFilter(
                 logger.error("", e)
             }
         }
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(SearchFilter::class.java)
     }
 }
 
