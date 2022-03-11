@@ -17,10 +17,7 @@ fun cpaDialog(cpa: String) : Dialog =
         width = "80%"
         formLayout {
             setResponsiveSteps(FormLayout.ResponsiveStep("0", 2))
-            label(getTranslation("lbl.cpa")) {
-                colspan = 2
-            }
-            textArea {
+            textArea(getTranslation("lbl.cpa")) {
                 colspan = 2
                 maxHeight = "800px"
                 isReadOnly = true

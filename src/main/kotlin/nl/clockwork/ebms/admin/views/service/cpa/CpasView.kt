@@ -45,7 +45,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                             confirmDialog {
                                 cpaClient.deleteCPA(it.item.get())
                                 //TODO: fix
-                                grid.refresh()
+                                this@grid.refresh()
                             }
                         }
                     }
@@ -65,7 +65,9 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                     text = getTranslation("cmd.new")
                     icon = Icon("lumo", "edit")
                     onLeftClick {
-                        newCpaDialog(cpaClient).open()
+                        newCpaDialog(cpaClient){
+                            grid.refresh()
+                        }.open()
                     }
                 }
             }

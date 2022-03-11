@@ -22,7 +22,7 @@ import java.io.InputStream
 import javax.validation.constraints.NotEmpty
 
 
-fun newCpaDialog(cpaClient: CPAService) : Dialog {
+fun newCpaDialog(cpaClient: CPAService, block: () -> Unit = {}) : Dialog {
     val binder = beanValidationBinder<SimpleCpaUploadFormData>()
     val formData = SimpleCpaUploadFormData()
     binder.readBean(formData)
@@ -40,6 +40,7 @@ fun newCpaDialog(cpaClient: CPAService) : Dialog {
                         if (formData.validate) {
                             cpaClient.validateCPA(cpa)
                             showSuccessNotification(getTranslation("cpa.valid"))
+                            block()
                         } else {
                             cpaClient.insertCPA(cpa, formData.overwrite)
                             showSuccessNotification("Cpa uploaded")

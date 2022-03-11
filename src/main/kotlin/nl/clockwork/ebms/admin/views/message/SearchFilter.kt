@@ -40,8 +40,8 @@ class SearchFilter(
     private val root =
         ui {
             binder.readBean(SearchFilterFormData())
-            //TODO use binder
             formLayout {
+                setResponsiveSteps(FormLayout.ResponsiveStep("0", 2))
                 classNames.add("panel")
                 cpaIdSelect = aComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO.selectCPAIds(),2) {
                     bind(binder).bind(SearchFilterFormData::cpaId)

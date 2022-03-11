@@ -4,108 +4,46 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setPrimary
 import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.icon.Icon
-import com.vaadin.flow.data.renderer.ComponentRenderer
-import com.vaadin.flow.router.*
-import nl.clockwork.ebms.admin.components.backButton
-import nl.clockwork.ebms.admin.views.MainLayout
-import nl.clockwork.ebms.admin.views.WithBean
-import java.net.URLDecoder
-import java.net.URLEncoder
+import nl.clockwork.ebms.admin.components.showErrorNotification
+import nl.clockwork.ebms.admin.components.showSuccessNotification
+import nl.ordina.cpa.urlmapping._2_18.URLMappingServiceException
+import nl.ordina.cpa.urlmapping._2_18.UrlMappingService
 import javax.validation.constraints.NotEmpty
 import nl.ordina.cpa.urlmapping._2.UrlMapping as UrlMappingExt
 
-@Route(value = "service/newUrlMapping", layout = MainLayout::class)
-@PageTitle("UrlMapping")
-class CreateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
-    private val binder = beanValidationBinder<UrlMapping>()
+fun urlMappingDialog(urlMappingClient: UrlMappingService, urlMapping: nl.ordina.cpa.urlmapping._2.UrlMapping, block: () -> Unit = {}) : Dialog =
+    urlMappingDialog(urlMappingClient, UrlMapping.urlMapping(urlMapping), block)
 
-    private val root = ui {
-        verticalLayout {
-            h2(getTranslation("urlMapping"))
-        }
-    }
-
-    override fun beforeEnter(event: BeforeEnterEvent?) {
-        with (root) {
-            urlMappingForm(UrlMapping())
-            horizontalLayout {
-                backButton(getTranslation("cmd.back"))
-                saveButton(getTranslation("cmd.set"))
-            }
-        }
-    }
-
-    private fun HasComponents.urlMappingForm(urlMapping: UrlMapping) {
-        formLayout {
-            setSizeFull()
-            label(getTranslation("lbl.urlMapping")) {
-                colspan = 2
-            }
-            textField(getTranslation("lbl.source")) {
-                colspan = 2
-                bind(binder).bind(UrlMapping::source)
-            }
-            textField(getTranslation("lbl.destination")) {
-                colspan = 2
-                bind(binder).bind(UrlMapping::destination)
-            }
-        }
-    }
-
-    private fun HasComponents.saveButton(text: String?) =
+fun urlMappingDialog(urlMappingClient: UrlMappingService, urlMapping: UrlMapping = UrlMapping(), block: () -> Unit = {}) : Dialog {
+    val binder = beanValidationBinder<UrlMapping>()
+    binder.readBean(urlMapping)
+    fun HasComponents.saveButton(text: String?, block: () -> Unit = {}) =
         button(text, Icon("lumo", "checkmark")) {
             onLeftClick {
-                val urlMapping = UrlMapping()
                 if (binder.writeBeanIfValid(urlMapping)) {
-                    urlMappingClient.setURLMapping(urlMapping.toUrlMapping())
-                    navigateTo(UrlMappingsView::class)
+                    try {
+                        urlMappingClient.setURLMapping(urlMapping.toUrlMapping())
+                        navigateTo(UrlMappingsView::class)
+                        showSuccessNotification("UrlMapping set")
+                        block()
+                    } catch (e: URLMappingServiceException) {
+//                        logger.error("", e)
+                        showErrorNotification(e.message)
+                    }
                 } else {
-                    //TODO show error
+                    showErrorNotification("Invalid data")
                 }
             }
             setPrimary()
         }
 
-    companion object {
-        fun newUrlLink(): ComponentRenderer<RouterLink, String> =
-            ComponentRenderer { text -> urlMappingRouterLink(text) }
-
-        private fun urlMappingRouterLink(text: String): RouterLink =
-            RouterLink(text, CreateUrlMappingView::class.java)
-    }
-}
-
-@Route(value = "service/urlMapping/:sourceUrl", layout = MainLayout::class)
-@PageTitle("UrlMapping")
-class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
-    private val binder = beanValidationBinder<UrlMapping>()
-
-    private val root = ui {
-        verticalLayout {
-            h2(getTranslation("urlMapping"))
-        }
-    }
-
-    override fun beforeEnter(event: BeforeEnterEvent?) {
-        val sourceUrl = event?.routeParameters?.get("sourceUrl")?.map { u -> URLDecoder.decode(u) }?.orElse(null)
-        val urlMapping = sourceUrl?.let { urlMappingClient.urlMappings.firstOrNull { it.source == sourceUrl } }
-        with (root) {
-            urlMapping?.let { urlMappingForm(it.toUrlMapping()) } ?: text(getTranslation("urlMappingNotFound"))
-            horizontalLayout {
-                backButton(getTranslation("cmd.back"))
-                saveButton(getTranslation("cmd.set"))
-            }
-        }
-    }
-
-    private fun UrlMappingExt.toUrlMapping() =
-        UrlMapping(source, destination)
-
-    private fun HasComponents.urlMappingForm(urlMapping: UrlMapping) {
-        binder.readBean(urlMapping)
+    return Dialog().apply {
+        width = "80%"
         formLayout {
-            setSizeFull()
+            setResponsiveSteps(FormLayout.ResponsiveStep("0", 2))
             label(getTranslation("lbl.urlMapping")) {
                 colspan = 2
             }
@@ -119,30 +57,16 @@ class UpdateUrlMappingView : KComposite(), BeforeEnterObserver, WithBean {
                 bind(binder).bind(UrlMapping::destination)
                 value = urlMapping.destination
             }
-        }
-    }
-
-    private fun HasComponents.saveButton(text: String?) =
-        button(text, Icon("lumo", "checkmark")) {
-            onLeftClick {
-                val urlMapping = UrlMapping()
-                if (binder.writeBeanIfValid(urlMapping)) {
-                    urlMappingClient.setURLMapping(urlMapping.toUrlMapping())
-                    navigateTo(UrlMappingsView::class)
-                } else {
-                    //TODO show error
+            horizontalLayout {
+                button(getTranslation("cmd.close")) {
+                    addClickListener{ _ -> this@apply.close() }
+                }
+                saveButton(getTranslation("cmd.set")) {
+                    this@apply.close()
+                    block()
                 }
             }
-            setPrimary()
         }
-
-    companion object {
-        fun navigateTo(sourceUrl: String) {
-            urlMappingRouterLink(sourceUrl).navigateTo()
-        }
-
-        private fun urlMappingRouterLink(sourceUrl: String): RouterLink =
-            RouterLink(sourceUrl, UpdateUrlMappingView::class.java, RouteParameters("sourceUrl", URLEncoder.encode(sourceUrl)))
     }
 }
 
@@ -157,4 +81,12 @@ data class UrlMapping(
             source = this@UrlMapping.source
             destination = this@UrlMapping.destination
         }
+
+    companion object {
+        fun urlMapping(urlMapping: UrlMappingExt) =
+            UrlMapping(
+                source = urlMapping.source,
+                destination = urlMapping.destination
+            )
+    }
 }
