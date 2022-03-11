@@ -33,18 +33,28 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
         verticalLayout {
             h2(getTranslation("cpas"))
             grid = grid(cpaDataProvider()) {
+                gridContextMenu() {
+                    item(getTranslation("cmd.details")) {
+                        addMenuItemClickListener {
+                            e -> cpaDialog(cpaClient.getCPA(e.item.get())).open()
+                        }
+                    }
+                    hr()
+                    item(getTranslation("cmd.delete")) {
+                        addMenuItemClickListener {
+                            confirmDialog {
+                                cpaClient.deleteCPA(it.item.get())
+                                //TODO: fix
+                                grid.refresh()
+                            }
+                        }
+                    }
+                }
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
-                addItemClickListener {
-                    CpaView.navigateTo(it.item)
-                }
                 addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
                 addColumn(cpaId()).setHeader(getTranslation("lbl.cpaId"))
                 addColumn(download(getTranslation("cmd.download"))).apply {
-                    isAutoWidth = true
-                    flexGrow = 0
-                }
-                addColumn(delete(getTranslation("cmd.delete"))).apply {
                     isAutoWidth = true
                     flexGrow = 0
                 }
@@ -55,7 +65,7 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                     text = getTranslation("cmd.new")
                     icon = Icon("lumo", "edit")
                     onLeftClick {
-                        navigateTo(SimpleCPAUploadView::class)
+                        newCpaDialog(cpaClient).open()
                     }
                 }
             }
@@ -78,20 +88,6 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
         StreamResource(resourceName, InputStreamFactory {
             ByteArrayInputStream(cpa.toByteArray())
         })
-
-    private fun delete(text: String) : ComponentRenderer<Button, String> =
-        ComponentRenderer {
-            cpaId -> Button(text, Icon("lumo", "cross")).apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
-                addClickListener {
-                    confirmDialog {
-                        cpaClient.deleteCPA(cpaId)
-                        //TODO: fix
-                        grid.refresh()
-                    }
-                }
-            }
-        }
 
     private fun cpaDataProvider() : DataProvider<String, *> =
         DataProvider.fromStream(cpaClient.cpaIds.stream())

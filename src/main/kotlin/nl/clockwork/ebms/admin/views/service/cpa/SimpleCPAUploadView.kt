@@ -6,6 +6,7 @@ import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.ComponentEventListener
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
@@ -16,27 +17,20 @@ import nl.clockwork.ebms.admin.components.showErrorNotification
 import nl.clockwork.ebms.admin.components.showSuccessNotification
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
+import nl.ordina.cpa._2_18.CPAService
 import java.io.InputStream
 import javax.validation.constraints.NotEmpty
 
 
-@Route(value = "service/simpleCpaUpload", layout = MainLayout::class)
-@PageTitle("cpaUpload")
-class SimpleCPAUploadView : KComposite(), WithBean {
-    private val formData = SimpleCpaUploadFormData()
-    private val root = ui {
-        verticalLayout {
-            h2(getTranslation("cpaUpload"))
-            cpaUploadForm()
-            horizontalLayout {
-                backButton(getTranslation("cmd.back"))
-            }
-        }
-    }
-
-    private fun HasComponents.cpaUploadForm(): FormLayout {
-        val memoryBuffer = MemoryBuffer()
-        return formLayout {
+fun newCpaDialog(cpaClient: CPAService) : Dialog {
+    val binder = beanValidationBinder<SimpleCpaUploadFormData>()
+    val formData = SimpleCpaUploadFormData()
+    binder.readBean(formData)
+    val memoryBuffer = MemoryBuffer()
+    return Dialog().apply {
+        width = "80%"
+        formLayout {
+            setResponsiveSteps(FormLayout.ResponsiveStep("0", 2))
             upload(memoryBuffer) {
                 text("CpaFile")
                 colspan = 2
@@ -69,6 +63,9 @@ class SimpleCPAUploadView : KComposite(), WithBean {
                 addValueChangeListener {
                     formData.overwrite = it.value
                 }
+            }
+            button(getTranslation("cmd.close")) {
+                addClickListener{ _ -> this@apply.close() }
             }
         }
     }

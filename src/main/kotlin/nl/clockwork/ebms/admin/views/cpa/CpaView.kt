@@ -13,10 +13,9 @@ import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 
 
-fun cpaDialog(cpa: Cpa) =
+fun cpaDialog(cpa: Cpa) : Dialog =
     Dialog().apply {
         width = "80%"
-//        height = "80%"
         formLayout {
             setResponsiveSteps(FormLayout.ResponsiveStep("0", 2))
             label(getTranslation("lbl.cpaId")) {
