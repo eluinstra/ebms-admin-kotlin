@@ -92,20 +92,20 @@ object EbMSAttachmentsX : Table("ebms_attachment") {
 
 object DeliveryTasks : Table("delivery_task") {
     val cpaId: Column<String> = varchar("cpa_id", 256)
-    val sendChannelId: Column<String> = varchar("send_channel_id", 256)
+    val sendChannelId: Column<String?> = varchar("send_channel_id", 256).nullable()
     val receiveChannelId: Column<String> = varchar("receive_channel_id", 256)
     val messageId: Column<String> = varchar("message_id", 256)
-    val timeToLive: Column<Instant> = timestamp("time_to_live")
+    val timeToLive: Column<Instant?> = timestamp("time_to_live").nullable()
     val timestamp: Column<Instant> = timestamp("time_stamp")
     val isConfidential: Column<Boolean> = bool("is_confidential")
     val retries: Column<Int> = integer("retries")
-    val serverId: Column<String> = varchar("server_id", 256)
+    val serverId: Column<String?> = varchar("server_id", 256).nullable()
 }
 
 object DeliveryLogs : Table("delivery_log") {
     val messageId: Column<String> = varchar("message_id", 256)
     val timestamp: Column<Instant> = timestamp("time_stamp")
-    val uri: Column<String> = varchar("uri", 256)
+    val uri: Column<String?> = varchar("uri", 256).nullable()
     val status: Column<DeliveryTaskStatus> = enumeration("status", DeliveryTaskStatus::class)
     val errorMessage: Column<String?> = text("error_message").nullable()
 }

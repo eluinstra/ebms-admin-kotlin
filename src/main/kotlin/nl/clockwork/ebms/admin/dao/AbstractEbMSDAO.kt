@@ -123,7 +123,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             with(DeliveryLogs) {
                 DeliveryLog(
                     timestamp = row[timestamp],
-                    uri = row[uri],
+                    uri = row[uri] ?: "",
                     status = row[status],
                     errorMessage = row[errorMessage]
                 )

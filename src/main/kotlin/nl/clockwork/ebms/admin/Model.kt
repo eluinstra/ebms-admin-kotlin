@@ -40,7 +40,7 @@ data class EbMSAttachment(
 )
 
 data class DeliveryTask(
-    val timeToLive: Instant,
+    val timeToLive: Instant?,
     val timestamp: Instant,
     val retries: Int
 )
