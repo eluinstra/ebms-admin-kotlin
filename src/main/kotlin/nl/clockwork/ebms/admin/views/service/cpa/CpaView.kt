@@ -9,6 +9,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.*
 import nl.clockwork.ebms.admin.Cpa
 import nl.clockwork.ebms.admin.components.backButton
+import nl.clockwork.ebms.admin.components.closeButton
 import nl.clockwork.ebms.admin.views.MainLayout
 import nl.clockwork.ebms.admin.views.WithBean
 
@@ -23,8 +24,8 @@ fun cpaDialog(cpa: String) : Dialog =
                 isReadOnly = true
                 value = cpa
             }
-            button(getTranslation("cmd.close")) {
-                addClickListener{ _ -> this@apply.close() }
-            }
+        }
+        closeButton(getTranslation("cmd.close")) {
+            addClickListener{ _ -> this@apply.close() }
         }
     }

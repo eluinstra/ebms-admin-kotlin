@@ -2,7 +2,6 @@ package nl.clockwork.ebms.admin.views.message
 
 import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
-import com.vaadin.flow.component.HasValue.ValueChangeListener
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datetimepicker.DateTimePicker
@@ -21,12 +20,11 @@ import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProt
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
-import javax.xml.bind.JAXBException
 
 
 class SearchFilter(
     messageFilter: EbMSMessageFilter,
-    refresh: () -> Unit = {}
+    onUpdate: () -> Unit = {}
 ) : KComposite(), WithBean {
     private val binder = beanValidationBinder<SearchFilterFormData>()
     private lateinit var cpaIdSelect: ComboBox<String>
@@ -80,7 +78,7 @@ class SearchFilter(
                 aTextField(getTranslation("lbl.refToMessageId"), 1) {
                     bind(binder).bind(SearchFilterFormData::refToMessageId)
                 }
-                createStatuses(1)
+                messageStatuses(1)
 //                createDateTimePicker(getTranslation("lbl.from"),1)
                 add(DateTimeSelect(getTranslation("lbl.fromDate"), getTranslation("lbl.fromTime"), 1))
 //                createDateTimePicker(getTranslation("lbl.to"),1)
@@ -91,13 +89,11 @@ class SearchFilter(
                         if (binder.writeBeanIfValid(formData)) {
                             try {
                                 formData.toMessageFilter(messageFilter)
-                                refresh()
+                                onUpdate()
                             } catch (e: EbMSMessageServiceException) {
                                 logger.error("", e)
                                 showErrorNotification(e.message)
                             }
-                        } else {
-                            showErrorNotification("Invalid data")
                         }
                     }
                 }
@@ -105,7 +101,7 @@ class SearchFilter(
                     val formData = SearchFilterFormData()
                     binder.readBean(formData)
                     formData.toMessageFilter(messageFilter)
-                    refresh()
+                    onUpdate()
                 }
             }
         }
@@ -126,30 +122,23 @@ class SearchFilter(
         JAXBParser.getInstance(CollaborationProtocolAgreement::class.java)
             .handleUnsafe(ebMSAdminDAO.findCPA(cpaId)?.cpa)
 
-    private fun ComboBox<*>.disable() {
-        value = null
-        setItems(emptyList())
-        isEnabled = false
-    }
-
     private fun onFromPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
-            fromRoleSelect.isEnabled = true
-            fromRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
+            val roleNames = CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it)
+            fromRoleSelect.enable(roleNames)
             toPartyIdSelect.disable()
         } ?: run {
             fromRoleSelect.disable()
             cpaIdSelect.value?.let {
                 toPartyIdSelect.isEnabled = true
-                toPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+                toPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(it)))
             }
         }
     }
 
     private fun onFromRoleChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
-            serviceSelect.isEnabled = true
-            serviceSelect.setItems(
+            serviceSelect.enable(
                 CPAUtils.getServiceNamesCanSend(
                     getCpa(cpaIdSelect.value),
                     fromPartyIdSelect.value,
@@ -160,45 +149,44 @@ class SearchFilter(
 
     private fun onToPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
-            toRoleSelect.isEnabled = true
-            toRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
+            val roleNames = CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it)
+            toRoleSelect.enable(roleNames)
             fromPartyIdSelect.disable()
         } ?: run {
             toRoleSelect.disable()
             cpaIdSelect.value?.let {
                 fromPartyIdSelect.isEnabled = true
-                fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+                fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(it)))
             }
         }
     }
 
     private fun onToRoleChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
-            serviceSelect.isEnabled = true
-            serviceSelect.setItems(
+            serviceSelect.enable(
                 CPAUtils.getServiceNamesCanReceive(
                     getCpa(cpaIdSelect.value),
                     toPartyIdSelect.value,
                     toRoleSelect.value
-                ))
+                )
+            )
         } ?: serviceSelect.disable()
     }
 
     private fun onServiceChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
-            actionSelect.isEnabled = true
-            actionSelect.setItems(
-                fromRoleSelect.value?.let {
-                    CPAUtils.getFromActionNamesCanSend(
+            actionSelect.enable(fromRoleSelect.value?.let {
+                CPAUtils.getFromActionNamesCanSend(
                     getCpa(cpaIdSelect.value),
                     fromPartyIdSelect.value,
                     fromRoleSelect.value,
-                    serviceSelect.value)
-                } ?: CPAUtils.getFromActionNamesCanReceive(
-                    getCpa(cpaIdSelect.value),
-                    toPartyIdSelect.value,
-                    toRoleSelect.value,
                     serviceSelect.value
+                )
+            } ?: CPAUtils.getFromActionNamesCanReceive(
+                getCpa(cpaIdSelect.value),
+                toPartyIdSelect.value,
+                toRoleSelect.value,
+                serviceSelect.value
             ))
         } ?: actionSelect.disable()
     }
@@ -207,7 +195,7 @@ class SearchFilter(
 //        submitButton.isEnabled = e?.value != null
     }
 
-    private fun FormLayout.createStatuses(colspan: Int): MultiSelectListBox<EbMSMessageStatus> =
+    private fun FormLayout.messageStatuses(colspan: Int): MultiSelectListBox<EbMSMessageStatus> =
         multiSelectListBox() {
             setColspan(this, colspan)
             height = "11em"
@@ -231,24 +219,6 @@ class SearchFilter(
             text = label
             block()
         }
-
-    private fun cpaSelectChangeListener(
-        cpaComboBox: ComboBox<String>,
-        fromPartySelect: PartySelect,
-        toPartySelect: PartySelect
-    ): ValueChangeListener<in ComponentValueChangeEvent<ComboBox<String>, String>> {
-        return ValueChangeListener {
-            try {
-                val value = cpaComboBox.value?.let { ebMSAdminDAO.findCPA(cpaComboBox.value!!) }
-                val cpa: CollaborationProtocolAgreement? =
-                    value?.let { JAXBParser.getInstance(CollaborationProtocolAgreement::class.java).handleUnsafe(value.cpa) }
-                fromPartySelect.updateState(cpa)
-                toPartySelect.updateState(cpa)
-            } catch (e: JAXBException) {
-                logger.error("", e)
-            }
-        }
-    }
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SearchFilter::class.java)

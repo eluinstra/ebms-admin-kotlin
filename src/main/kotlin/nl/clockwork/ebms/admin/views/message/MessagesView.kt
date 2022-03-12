@@ -7,7 +7,6 @@ import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid.SelectionMode.NONE
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
-import com.vaadin.flow.data.provider.Query
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -47,7 +46,7 @@ class MessagesView : KComposite(), WithBean, WithDate {
 
     private fun createMessageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> =
         DataProvider.fromCallbacks(
-            { query: Query<EbMSMessage, Void> ->
+            { query ->
                 ebMSAdminDAO.selectMessages(
                     messageFilter,
                     query.offset.toLong(),
@@ -141,7 +140,7 @@ class MessagesView : KComposite(), WithBean, WithDate {
                 setHeader(getTranslation("lbl.statusTime"))
                 isAutoWidth = true
             }
-            setItemDetailsRenderer(createMessageDetailsRenderer())
+            setItemDetailsRenderer(messageDetailsRenderer())
         }
 
     private fun createCsv(): InputStreamFactory =

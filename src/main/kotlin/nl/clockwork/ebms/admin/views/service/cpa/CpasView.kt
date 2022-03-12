@@ -1,10 +1,8 @@
 package nl.clockwork.ebms.admin.views.service.cpa
 
 import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.refresh
 import com.vaadin.flow.component.Text
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
@@ -27,8 +25,9 @@ import java.io.ByteArrayInputStream
 
 @Route(value = "service/cpa", layout = MainLayout::class)
 @PageTitle("CPAs")
-class CpasView : KComposite(), AfterNavigationObserver, WithBean {
+class CpasView : KComposite(), WithBean {
     private lateinit var grid: Grid<String>
+
     private val root = ui {
         verticalLayout {
             h2(getTranslation("cpas"))
@@ -44,7 +43,6 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
                         addMenuItemClickListener {
                             confirmDialog {
                                 cpaClient.deleteCPA(it.item.get())
-                                //TODO: fix
                                 this@grid.refresh()
                             }
                         }
@@ -92,9 +90,8 @@ class CpasView : KComposite(), AfterNavigationObserver, WithBean {
         })
 
     private fun cpaDataProvider() : DataProvider<String, *> =
-        DataProvider.fromStream(cpaClient.cpaIds.stream())
-
-    override fun afterNavigation(event: AfterNavigationEvent?) {
-        grid.refresh()
-    }
+        DataProvider.fromCallbacks(
+            { query -> cpaClient.cpaIds.drop(query.offset).take(query.limit).stream() },
+            { cpaClient.cpaIds.size }
+        )
 }

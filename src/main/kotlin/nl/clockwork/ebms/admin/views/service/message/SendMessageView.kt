@@ -48,31 +48,31 @@ class SendMessageView : KComposite(), WithBean {
         formLayout {
             cpaIdSelect = aComboBox(getTranslation("lbl.cpaId"), cpaClient.cpaIds,2) {
                 bind(binder).bind(SendMessageFormData::cpaId)
-                addValueChangeListener { onCpaIdSelected(it) }
+                addValueChangeListener { onCpaIdChanged(it) }
             }
             fromPartyIdSelect = aComboBox(getTranslation("lbl.fromPartyId"), emptyList(),2) {
                 bind(binder).bind(SendMessageFormData::fromPartyId)
-                addValueChangeListener { onFromPartyIdSelected(it) }
+                addValueChangeListener { onFromPartyIdChanged(it) }
             }
             fromRoleSelect = aComboBox(getTranslation("lbl.fromRole"), emptyList(),2) {
                 bind(binder).bind(SendMessageFormData::fromRole)
-                addValueChangeListener { onFromRoleSelected(it) }
+                addValueChangeListener { onFromRoleChanged(it) }
             }
             toPartyIdSelect = aComboBox(getTranslation("lbl.toPartyId"), emptyList(),2) {
                 bind(binder).bind(SendMessageFormData::toPartyId)
-                addValueChangeListener { onToPartyIdSelected(it) }
+                addValueChangeListener { onToPartyIdChanged(it) }
             }
             toRoleSelect = aComboBox(getTranslation("lbl.toRole"), emptyList(),2) {
                 bind(binder).bind(SendMessageFormData::toRole)
-                addValueChangeListener { onToRoleSelected(it) }
+                addValueChangeListener { onToRoleChanged(it) }
             }
             serviceSelect = aComboBox(getTranslation("lbl.service"), emptyList(),2) {
                 bind(binder).bind(SendMessageFormData::service)
-                addValueChangeListener { onServiceSelected(it) }
+                addValueChangeListener { onServiceChanged(it) }
             }
             actionSelect = aComboBox(getTranslation("lbl.action"), emptyList(),2) {
                 bind(binder).bind(SendMessageFormData::action)
-                addValueChangeListener { onActionSelected(it) }
+                addValueChangeListener { onActionChanged(it) }
             }
             aTextField(getTranslation("lbl.conversationId"), 2) {
                 bind(binder).bind(SendMessageFormData::conversationId)
@@ -93,52 +93,38 @@ class SendMessageView : KComposite(), WithBean {
         }
     }
 
-    private fun onCpaIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+    private fun onCpaIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
-            fromPartyIdSelect.isEnabled = true
-            fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(it)))
+            fromPartyIdSelect.enable(CPAUtils.getPartyIds(getCpa(it)))
         } ?: fromPartyIdSelect.disable()
-        onFromPartyIdSelected(null)
     }
 
     private fun getCpa(cpaId: String) =
         JAXBParser.getInstance(CollaborationProtocolAgreement::class.java)
             .handleUnsafe(cpaClient.getCPA(cpaId))
 
-    private fun ComboBox<*>.disable() {
-        setItems(emptyList())
-        isEnabled = false
-    }
-
-    private fun onFromPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
-            fromRoleSelect.isEnabled = true
-            fromRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
+    private fun onFromPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
+            fromRoleSelect.enable(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
 
         } ?: fromRoleSelect.disable()
-        onFromRoleSelected(null)
     }
 
-    private fun onFromRoleSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
-            toPartyIdSelect.isEnabled = true
-            toPartyIdSelect.setItems(CPAUtils.getOtherPartyIds(getCpa(cpaIdSelect.value), fromPartyIdSelect.value))
+    private fun onFromRoleChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
+            toPartyIdSelect.enable(CPAUtils.getOtherPartyIds(getCpa(cpaIdSelect.value), fromPartyIdSelect.value))
         } ?: toPartyIdSelect.disable()
-        onToPartyIdSelected(null)
     }
 
-    private fun onToPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
-            toRoleSelect.isEnabled = true
-            toRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
+    private fun onToPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
+            toRoleSelect.enable(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
         } ?: toRoleSelect.disable()
-        onToRoleSelected(null)
     }
 
-    private fun onToRoleSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
-            serviceSelect.isEnabled = true
-            serviceSelect.setItems(CPAUtils.getServiceNamesCanSend(
+    private fun onToRoleChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
+            serviceSelect.enable(CPAUtils.getServiceNamesCanSend(
                 getCpa(cpaIdSelect.value),
                 fromPartyIdSelect.value,
                 fromRoleSelect.value
@@ -148,15 +134,13 @@ class SendMessageView : KComposite(), WithBean {
                     toPartyIdSelect.value,
                     toRoleSelect.value
                 ).toSet()
-            ))
+            ).toList())
         } ?: serviceSelect.disable()
-        onServiceSelected(null)
     }
 
-    private fun onServiceSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
-            actionSelect.isEnabled = true
-            actionSelect.setItems(CPAUtils.getFromActionNamesCanSend(
+    private fun onServiceChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
+            actionSelect.enable(CPAUtils.getFromActionNamesCanSend(
                 getCpa(cpaIdSelect.value),
                 fromPartyIdSelect.value,
                 fromRoleSelect.value,
@@ -168,13 +152,12 @@ class SendMessageView : KComposite(), WithBean {
                     toRoleSelect.value,
                     serviceSelect.value
                 ).toSet()
-            ))
+            ).toList())
         } ?: actionSelect.disable()
-        onActionSelected(null)
     }
 
-    private fun onActionSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        submitButton.isEnabled = e?.value != null
+    private fun onActionChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        submitButton.isEnabled = e.value != null
     }
 
     private fun @VaadinDsl HorizontalLayout.sendButton(text: String) =
@@ -186,18 +169,7 @@ class SendMessageView : KComposite(), WithBean {
                     try {
                         val messageId = ebMSMessageClient.sendMessage(
                             MessageRequest().apply {
-                                properties = MessageRequestProperties().apply {
-                                    cpaId = formData.cpaId
-                                    fromPartyId = formData.fromPartyId
-                                    fromRole = formData.fromRole
-                                    toPartyId = formData.toPartyId
-                                    toRole = formData.toRole
-                                    service = formData.service
-                                    action = formData.action
-                                    conversationId = formData.conversationId
-                                    messageId = formData.messageId
-                                    refToMessageId = formData.refToMessageId
-                                }
+                                properties = formData.toMessageProperties()
 //                                dataSource = emptyList<DataSource>()
                             }
                         )
@@ -206,8 +178,6 @@ class SendMessageView : KComposite(), WithBean {
                         logger.error("", e)
                         showErrorNotification(e.message)
                     }
-                } else {
-                    showErrorNotification("Invalid data")
                 }
             }
             setPrimary()
@@ -236,4 +206,18 @@ data class SendMessageFormData(
     var conversationId: String? = null,
     var messageId: String? = null,
     var refToMessageId: String? = null
-)
+) {
+    fun toMessageProperties() =
+        MessageRequestProperties().also {
+            it.cpaId = cpaId
+            it.fromPartyId = fromPartyId
+            it.fromRole = fromRole
+            it.toPartyId = toPartyId
+            it.toRole = toRole
+            it.service = service
+            it.action = action
+            it.conversationId = conversationId
+            it.messageId = messageId
+            it.refToMessageId = refToMessageId
+        }
+}

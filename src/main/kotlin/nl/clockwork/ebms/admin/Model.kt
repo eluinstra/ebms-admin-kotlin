@@ -53,8 +53,8 @@ data class DeliveryLog(
 )
 
 class EbMSMessageFilter(
-    var messageNr: Int? = 0,
-    var serviceMessage: Boolean? = false,
+    var messageNr: Int? = null,
+    var serviceMessage: Boolean? = null,
     var statuses: Set<EbMSMessageStatus> = emptySet(),
     var from: LocalDateTime? = null,
     var to: LocalDateTime? = null,

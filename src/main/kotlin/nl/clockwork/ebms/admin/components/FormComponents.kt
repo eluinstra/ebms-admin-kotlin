@@ -14,6 +14,7 @@ fun FormLayout.aLabel(label: String, colspan: Int = 2, block: (@VaadinDsl Label)
         element.style.set("font-size", "13px")
         element.style.set("font-weight", "400")
         element.style.set("color", "#666")
+        block()
     }
 
 fun FormLayout.aTextField(label: String, colspan: Int = 2, block: (@VaadinDsl TextField).() -> Unit = {}): TextField =
@@ -31,3 +32,17 @@ fun FormLayout.aComboBox(label: String, items: List<String>, colspan: Int = 2, b
         isEnabled = items != emptyList<Any>()
         block()
     }
+
+private fun List<String>.defaultValue() : String? = if (size == 1) get(0) else null
+
+fun ComboBox<String>.enable(items: List<String>) {
+    isEnabled = true
+    setItems(items)
+    value = items.defaultValue()
+}
+
+fun ComboBox<*>.disable() {
+    value = null
+    setItems(emptyList())
+    isEnabled = false
+}

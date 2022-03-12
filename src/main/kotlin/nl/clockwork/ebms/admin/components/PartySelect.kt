@@ -43,10 +43,7 @@ class PartySelect constructor(partyIdLabel: String, roleLabel: String, colspan: 
             val isEnabled = cpa != null && partyIdSelect.value != null
             roleSelect.setItems(
                 if (isEnabled)
-                    CPAUtils.getRoleNames(
-                        cpa!!,
-                        partyIdSelect.value
-                    )
+                    CPAUtils.getRoleNames(cpa!!, partyIdSelect.value)
                 else
                     emptyList()
             )
@@ -88,7 +85,7 @@ class PartySelect constructor(partyIdLabel: String, roleLabel: String, colspan: 
             partyIdSelect.clear()
             roleSelect.clear()
         } else {
-            partyIdSelect.setValue(party.partyId)
+            partyIdSelect.value = party.partyId
             roleSelect.setValue(party.role)
         }
     }

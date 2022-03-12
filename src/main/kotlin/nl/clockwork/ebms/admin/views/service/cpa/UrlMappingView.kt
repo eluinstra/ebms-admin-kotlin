@@ -7,6 +7,7 @@ import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.icon.Icon
+import nl.clockwork.ebms.admin.components.closeButton
 import nl.clockwork.ebms.admin.components.showErrorNotification
 import nl.clockwork.ebms.admin.components.showSuccessNotification
 import nl.ordina.cpa.urlmapping._2_18.URLMappingServiceException
@@ -14,27 +15,24 @@ import nl.ordina.cpa.urlmapping._2_18.UrlMappingService
 import javax.validation.constraints.NotEmpty
 import nl.ordina.cpa.urlmapping._2.UrlMapping as UrlMappingExt
 
-fun urlMappingDialog(urlMappingClient: UrlMappingService, urlMapping: nl.ordina.cpa.urlmapping._2.UrlMapping, block: () -> Unit = {}) : Dialog =
-    urlMappingDialog(urlMappingClient, UrlMapping.urlMapping(urlMapping), block)
+fun urlMappingDialog(urlMappingClient: UrlMappingService, urlMapping: UrlMappingExt, onUpdate: () -> Unit = {}) : Dialog =
+    urlMappingDialog(urlMappingClient, UrlMapping.urlMapping(urlMapping), onUpdate)
 
-fun urlMappingDialog(urlMappingClient: UrlMappingService, urlMapping: UrlMapping = UrlMapping(), block: () -> Unit = {}) : Dialog {
+fun urlMappingDialog(urlMappingClient: UrlMappingService, urlMapping: UrlMapping = UrlMapping(), onSave: () -> Unit = {}) : Dialog {
     val binder = beanValidationBinder<UrlMapping>()
     binder.readBean(urlMapping)
-    fun HasComponents.saveButton(text: String?, block: () -> Unit = {}) =
+    fun HasComponents.saveButton(text: String?, onSuccess: () -> Unit = {}) =
         button(text, Icon("lumo", "checkmark")) {
             onLeftClick {
                 if (binder.writeBeanIfValid(urlMapping)) {
                     try {
                         urlMappingClient.setURLMapping(urlMapping.toUrlMapping())
-                        navigateTo(UrlMappingsView::class)
+                        onSuccess()
                         showSuccessNotification("UrlMapping set")
-                        block()
                     } catch (e: URLMappingServiceException) {
 //                        logger.error("", e)
                         showErrorNotification(e.message)
                     }
-                } else {
-                    showErrorNotification("Invalid data")
                 }
             }
             setPrimary()
@@ -50,21 +48,21 @@ fun urlMappingDialog(urlMappingClient: UrlMappingService, urlMapping: UrlMapping
             textField(getTranslation("lbl.source")) {
                 colspan = 2
                 bind(binder).bind(UrlMapping::source)
-                value = urlMapping.source
+                value = urlMapping.source ?: ""
             }
             textField(getTranslation("lbl.destination")) {
                 colspan = 2
                 bind(binder).bind(UrlMapping::destination)
-                value = urlMapping.destination
+                value = urlMapping.destination ?: ""
             }
-            horizontalLayout {
-                button(getTranslation("cmd.close")) {
-                    addClickListener{ _ -> this@apply.close() }
-                }
-                saveButton(getTranslation("cmd.set")) {
-                    this@apply.close()
-                    block()
-                }
+        }
+        horizontalLayout {
+            closeButton(getTranslation("cmd.close")) {
+                addClickListener{ _ -> this@apply.close() }
+            }
+            saveButton(getTranslation("cmd.set")) {
+                this@apply.close()
+                onSave()
             }
         }
     }

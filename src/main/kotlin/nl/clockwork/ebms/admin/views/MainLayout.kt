@@ -28,8 +28,13 @@ class MainLayout : KComposite(), RouterLayout {
                     isOpenOnHover = true
                     addThemeVariants(MenuBarVariant.LUMO_TERTIARY, MenuBarVariant.LUMO_ICON)
                     item("", { navigateTo(HomeView::class) }) {
-                        icon(VaadinIcon.HOME_O)
-                        text(getTranslation("home"))
+                        horizontalLayout {
+                            isSpacing = false
+                            icon(VaadinIcon.HOME_O) {
+                                setSize("0.8em")
+                            }
+                            text(getTranslation("home"))
+                        }
                     }
                     item(getTranslation("cpaService")) {
                         item(getTranslation("cpas"), { navigateTo(CpaServiceView::class) })
@@ -56,8 +61,13 @@ class MainLayout : KComposite(), RouterLayout {
                         item(getTranslation("messages"), { navigateTo(MessagesView::class) })
                     }
                     item("", { navigateTo(AboutView::class) }) {
-                        icon(VaadinIcon.INFO_CIRCLE_O)
-                        text(getTranslation("about"))
+                        horizontalLayout {
+                            isSpacing = false
+                            icon(VaadinIcon.INFO_CIRCLE_O) {
+                                setSize("0.8em")
+                            }
+                            text(getTranslation("about"))
+                        }
                     }
                 }
             }

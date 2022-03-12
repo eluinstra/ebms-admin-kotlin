@@ -58,7 +58,6 @@ class UrlMappingsView : KComposite(), WithBean {
                     addMenuItemClickListener {
                         confirmDialog {
                             urlMappingClient.deleteURLMapping(it.item.get().source)
-                            //TODO: fix
                             this@grid.refresh()
                         }
                     }
@@ -69,16 +68,16 @@ class UrlMappingsView : KComposite(), WithBean {
             addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
             addColumn("source").setHeader(getTranslation("lbl.source"))
                 .editorComponent = TextField().apply {
-                    setWidthFull()
+                setWidthFull()
 //                  addCloseHandler(this, editor)
-                    bind(binder).bind(UrlMapping::getSource, UrlMapping::setSource)
-                }
+                bind(binder).bind(UrlMapping::getSource, UrlMapping::setSource)
+            }
             addColumn("destination").setHeader(getTranslation("lbl.destination"))
                 .editorComponent = TextField().apply {
-                    setWidthFull()
+                setWidthFull()
 //                  addCloseHandler(this, editor)
-                    bind(binder).bind(UrlMapping::getDestination, UrlMapping::setDestination)
-                }
+                bind(binder).bind(UrlMapping::getDestination, UrlMapping::setDestination)
+            }
         }
         val editor = result.editor
         editor.binder = binder
@@ -93,6 +92,8 @@ class UrlMappingsView : KComposite(), WithBean {
     }
 
     private fun urlMappingDataProvider() : DataProvider<UrlMapping, *> =
-        DataProvider.fromStream(urlMappingClient.urlMappings.stream())
-
+        DataProvider.fromCallbacks(
+            { query -> urlMappingClient.urlMappings.drop(query.offset).take(query.limit).stream() },
+            { urlMappingClient.urlMappings.size }
+        )
 }

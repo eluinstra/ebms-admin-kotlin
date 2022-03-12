@@ -1,28 +1,16 @@
 package nl.clockwork.ebms.admin.views.service.cpa
 
 import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.kaributools.navigateTo
-import com.vaadin.flow.component.ClickEvent
-import com.vaadin.flow.component.ComponentEventListener
-import com.vaadin.flow.component.HasComponents
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.formlayout.FormLayout
-import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
-import com.vaadin.flow.router.PageTitle
-import com.vaadin.flow.router.Route
-import nl.clockwork.ebms.admin.components.backButton
+import nl.clockwork.ebms.admin.components.closeButton
 import nl.clockwork.ebms.admin.components.showErrorNotification
 import nl.clockwork.ebms.admin.components.showSuccessNotification
-import nl.clockwork.ebms.admin.views.MainLayout
-import nl.clockwork.ebms.admin.views.WithBean
 import nl.ordina.cpa._2_18.CPAService
-import java.io.InputStream
-import javax.validation.constraints.NotEmpty
 
 
-fun newCpaDialog(cpaClient: CPAService, block: () -> Unit = {}) : Dialog {
+fun newCpaDialog(cpaClient: CPAService, onSave: () -> Unit = {}) : Dialog {
     val binder = beanValidationBinder<SimpleCpaUploadFormData>()
     val formData = SimpleCpaUploadFormData()
     binder.readBean(formData)
@@ -40,9 +28,9 @@ fun newCpaDialog(cpaClient: CPAService, block: () -> Unit = {}) : Dialog {
                         if (formData.validate) {
                             cpaClient.validateCPA(cpa)
                             showSuccessNotification(getTranslation("cpa.valid"))
-                            block()
                         } else {
                             cpaClient.insertCPA(cpa, formData.overwrite)
+                            onSave()
                             showSuccessNotification("Cpa uploaded")
                         }
                     } catch (e: java.lang.Exception) {
@@ -65,9 +53,9 @@ fun newCpaDialog(cpaClient: CPAService, block: () -> Unit = {}) : Dialog {
                     formData.overwrite = it.value
                 }
             }
-            button(getTranslation("cmd.close")) {
-                addClickListener{ _ -> this@apply.close() }
-            }
+        }
+        closeButton(getTranslation("cmd.close")) {
+            addClickListener{ _ -> this@apply.close() }
         }
     }
 }

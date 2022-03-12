@@ -7,7 +7,6 @@ import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.component.grid.Grid.SelectionMode.NONE
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.data.provider.DataProvider
-import com.vaadin.flow.data.provider.Query
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer
 import com.vaadin.flow.function.SerializableFunction
 import com.vaadin.flow.router.PageTitle
@@ -42,7 +41,7 @@ class TrafficView : KComposite(), WithBean, WithDate {
 
     private fun messageDataProvider(messageFilter: EbMSMessageFilter): DataProvider<EbMSMessage, *> =
         DataProvider.fromCallbacks(
-            { query: Query<EbMSMessage, Void> ->
+            { query ->
                 ebMSAdminDAO.selectMessages(
                     messageFilter,
                     query.offset.toLong(),
@@ -124,7 +123,7 @@ class TrafficView : KComposite(), WithBean, WithDate {
                 setHeader(getTranslation("lbl.statusTime"))
                 isAutoWidth = true
             }
-            setItemDetailsRenderer(createMessageDetailsRenderer())
+            setItemDetailsRenderer(messageDetailsRenderer())
         }
 
 }

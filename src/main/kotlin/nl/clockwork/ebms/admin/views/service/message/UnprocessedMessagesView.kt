@@ -1,6 +1,7 @@
 package nl.clockwork.ebms.admin.views.service.message
 
 import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.kaributools.refresh
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
@@ -28,13 +29,22 @@ class UnprocessedMessagesView : KComposite(), WithBean {
         verticalLayout {
             h2(getTranslation("unprocessedMessages"))
             grid = grid(messageIdDataProvider()) {
+                gridContextMenu() {
+                    item(getTranslation("cmd.details")) {
+                        addMenuItemClickListener { e ->
+                            val message = ebMSMessageClient.getMessage(e.item.get(), false)
+                            messageDialog(message) {
+                                ebMSMessageClient.processMessage(message.properties.messageId)
+                                grid.refresh()
+                            }.open()
+                        }
+                    }
+                }
                 isExpand = true
                 setSelectionMode(Grid.SelectionMode.NONE)
-                addItemClickListener {
-                    MessageView.navigateTo(it.item)
-                }
                 addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES)
                 addColumn(messageId()).setHeader(getTranslation("lbl.messageId"))
+                setItemDetailsRenderer(messageDetailsRenderer(ebMSMessageClient))
             }
             horizontalLayout {
                 backButton(getTranslation("cmd.back"))
@@ -44,8 +54,8 @@ class UnprocessedMessagesView : KComposite(), WithBean {
     }
 
     private fun messageId(): ComponentRenderer<Text, String> =
-        ComponentRenderer {
-                messageId -> Text(messageId)
+        ComponentRenderer { messageId ->
+            Text(messageId)
         }
 
     private fun createCsv(): InputStreamFactory =
@@ -65,5 +75,10 @@ class UnprocessedMessagesView : KComposite(), WithBean {
         }
 
     private fun messageIdDataProvider(): DataProvider<String, *> =
-        DataProvider.fromStream(ebMSMessageClient.getUnprocessedMessageIds(null, 0).stream())
+        DataProvider.fromCallbacks(
+            { query ->
+                ebMSMessageClient.getUnprocessedMessageIds(null, 0).drop(query.offset).take(query.limit).stream()
+            },
+            { ebMSMessageClient.getUnprocessedMessageIds(null, 0).size }
+        )
 }

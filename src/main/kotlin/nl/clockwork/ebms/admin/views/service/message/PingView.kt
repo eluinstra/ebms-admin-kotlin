@@ -43,15 +43,15 @@ class PingView : KComposite(), WithBean {
         formLayout {
             cpaIdSelect = aComboBox(getTranslation("lbl.cpaId"), cpaClient.cpaIds,2) {
                 bind(binder).bind(PingFormData::cpaId)
-                addValueChangeListener { onCpaIdSelected(it) }
+                addValueChangeListener { onCpaIdChanged(it) }
             }
             fromPartyIdSelect = aComboBox(getTranslation("lbl.fromPartyId"), emptyList(),2) {
                 bind(binder).bind(PingFormData::fromPartyId)
-                addValueChangeListener { onFromPartyIdSelected(it) }
+                addValueChangeListener { onFromPartyIdChanged(it) }
             }
             toPartyIdSelect = aComboBox(getTranslation("lbl.toPartyId"), emptyList(),2) {
                 bind(binder).bind(PingFormData::toPartyId)
-                addValueChangeListener { onToPartyIdSelected(it) }
+                addValueChangeListener { onToPartyIdChanged(it) }
             }
         }
         horizontalLayout {
@@ -63,37 +63,24 @@ class PingView : KComposite(), WithBean {
         }
     }
 
-    private fun onCpaIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+    private fun onCpaIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
-            fromPartyIdSelect.isEnabled = true
-            fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(it)))
-        } ?: run {
-            fromPartyIdSelect.disable()
-        }
-        onFromPartyIdSelected(null)
+            fromPartyIdSelect.enable(CPAUtils.getPartyIds(getCpa(it)))
+        } ?: fromPartyIdSelect.disable()
     }
 
     private fun getCpa(cpaId: String) =
         JAXBParser.getInstance(CollaborationProtocolAgreement::class.java)
             .handleUnsafe(cpaClient.getCPA(cpaId))
 
-    private fun ComboBox<*>.disable() {
-        setItems(emptyList())
-        isEnabled = false
+    private fun onFromPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
+            toPartyIdSelect.enable(CPAUtils.getOtherPartyIds(getCpa(cpaIdSelect.value), it))
+        } ?: toPartyIdSelect.disable()
     }
 
-    private fun onFromPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
-            toPartyIdSelect.isEnabled = true
-            toPartyIdSelect.setItems(CPAUtils.getOtherPartyIds(getCpa(cpaIdSelect.value), it))
-        } ?: run {
-            toPartyIdSelect.disable()
-        }
-        onToPartyIdSelected(null)
-    }
-
-    private fun onToPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        submitButton.isEnabled = e?.value != null
+    private fun onToPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        submitButton.isEnabled = e.value != null
     }
 
     private fun @VaadinDsl HorizontalLayout.pingButton(text: String?) =
@@ -111,8 +98,6 @@ class PingView : KComposite(), WithBean {
                             showErrorNotification(e.message)
                         }
                     }
-                } else {
-                    showErrorNotification("Invalid data")
                 }
             }
             setPrimary()

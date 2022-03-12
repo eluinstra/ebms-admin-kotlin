@@ -251,19 +251,6 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             }
     }
 
-    private fun messageFilter(filter: EbMSMessageFilter, condition: Op<Boolean>) : Op<Boolean> =
-        with(EbMSMessages) {
-            var result = applyFilter(filter, condition)
-            result = filter.messageNr?.let { result.and { messageNr eq it } } ?: result
-            result = if (filter.statuses.isNotEmpty()) result.and { status inList filter.statuses.map { it.id }.toList() } else result
-            result = filter.serviceMessage?.let {
-                if (it) result.and { service eq EbMSAction.EBMS_SERVICE_URI }
-                else result.and { service neq EbMSAction.EBMS_SERVICE_URI }
-            } ?: result
-            result = filter.from?.let { result.and { timestamp greaterEq it.atZone(ZoneId.systemDefault()).toInstant() } } ?: result
-            filter.to?.let { result.and { timestamp less it.atZone(ZoneId.systemDefault()).toInstant() } } ?: result
-        }
-
     @Transactional("springTransactionManager")
     override fun writeMessageToZip(messageId: String, messageNr: Int, zip: ZipOutputStream) =
         EbMSMessages
@@ -271,10 +258,10 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             .select { EbMSMessages.messageId eq messageId and (EbMSMessages.messageNr eq messageNr) }
             .forEach { writeMessageContent(it, zip) }
 
-    protected fun writeMessageContent(it: ResultRow, zip: ZipOutputStream) {
+    protected fun writeMessageContent(row: ResultRow, zip: ZipOutputStream) {
         val entry = ZipEntry("message.xml")
         zip.putNextEntry(entry)
-        it[EbMSMessages.content]?.run { zip.write(this.toByteArray()) }
+        row[EbMSMessages.content]?.run { zip.write(this.toByteArray()) }
         zip.closeEntry()
     }
 
@@ -301,6 +288,19 @@ abstract class AbstractEbMSDAO : EbMSDAO {
     }
 
     companion object {
+        private fun messageFilter(filter: EbMSMessageFilter, condition: Op<Boolean>) : Op<Boolean> =
+            with(EbMSMessages) {
+                var result = applyFilter(filter, condition)
+                result = filter.messageNr?.let { result.and { messageNr eq it } } ?: result
+                result = if (filter.statuses.isNotEmpty()) result.and { status inList filter.statuses.map { it.id } } else result
+                result = filter.serviceMessage?.let {
+                    if (it) result.and { service eq EbMSAction.EBMS_SERVICE_URI }
+                    else result.and { service neq EbMSAction.EBMS_SERVICE_URI }
+                } ?: result
+                result = filter.from?.let { result.and { timestamp greaterEq it.atZone(ZoneId.systemDefault()).toInstant() } } ?: result
+                filter.to?.let { result.and { timestamp less it.atZone(ZoneId.systemDefault()).toInstant() } } ?: result
+            }
+
         private fun applyFilter(filter: EbMSMessageFilter, condition: Op<Boolean>): Op<Boolean> {
             fun applyPathFilter(partyId: Column<String>, role: Column<String?>, party: Party?, condition: Op<Boolean>) : Op<Boolean> =
                 party?.let {

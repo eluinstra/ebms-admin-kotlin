@@ -53,8 +53,6 @@ class MessageStatusView : KComposite(), WithBean {
                         logger.error("", e)
                         showErrorNotification(e.message)
                     }
-                } else {
-                    showErrorNotification("Invalid data")
                 }
             }
         }

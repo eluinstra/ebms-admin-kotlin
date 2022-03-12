@@ -1,14 +1,12 @@
 # ebms-admin-kotlin
 
 ## Todo:
-- details/edit inline in grid or in a dialog instead of on separate detail pages
-- grid functions per row in context menu (available on right click)
-- move search criteria to popup
 - custom error page
 - admin properties page
+- move cpa download to context menu
+- move search criteria to popup?
 
 ## Issues
-- Grid refresh not working
 - No event.stopPropagation() available in Java, so cannot combine a grid with clickable item details and buttons
   - workaround move buttons to context menu
 - i18n (getTranslation()) params printed as pointers ([Ljava.lang.Object;@17b51763) instead of string ("test") with Kotlin TranslationProvider
