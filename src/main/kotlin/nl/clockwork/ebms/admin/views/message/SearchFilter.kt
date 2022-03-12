@@ -39,37 +39,37 @@ class SearchFilter(
 
     private val root =
         ui {
-            binder.readBean(SearchFilterFormData())
+            binder.readBean(SearchFilterFormData(messageFilter))
             formLayout {
                 setResponsiveSteps(FormLayout.ResponsiveStep("0", 2))
                 classNames.add("panel")
                 cpaIdSelect = aComboBox(getTranslation("lbl.cpaId"), ebMSAdminDAO.selectCPAIds(),2) {
                     bind(binder).bind(SearchFilterFormData::cpaId)
-                    addValueChangeListener { onCpaIdSelected(it) }
+                    addValueChangeListener { onCpaIdChanged(it) }
                 }
                 fromPartyIdSelect = aComboBox(getTranslation("lbl.fromPartyId"), emptyList(),1) {
                     bind(binder).bind(SearchFilterFormData::fromPartyId)
-                    addValueChangeListener { onFromPartyIdSelected(it) }
+                    addValueChangeListener { onFromPartyIdChanged(it) }
                 }
                 fromRoleSelect = aComboBox(getTranslation("lbl.fromRole"), emptyList(),1) {
                     bind(binder).bind(SearchFilterFormData::fromRole)
-                    addValueChangeListener { onFromRoleSelected(it) }
+                    addValueChangeListener { onFromRoleChanged(it) }
                 }
                 toPartyIdSelect = aComboBox(getTranslation("lbl.toPartyId"), emptyList(),1) {
                     bind(binder).bind(SearchFilterFormData::toPartyId)
-                    addValueChangeListener { onToPartyIdSelected(it) }
+                    addValueChangeListener { onToPartyIdChanged(it) }
                 }
                 toRoleSelect = aComboBox(getTranslation("lbl.toRole"), emptyList(),1) {
                     bind(binder).bind(SearchFilterFormData::toRole)
-                    addValueChangeListener { onToRoleSelected(it) }
+                    addValueChangeListener { onToRoleChanged(it) }
                 }
                 serviceSelect = aComboBox(getTranslation("lbl.service"), emptyList(),1) {
                     bind(binder).bind(SearchFilterFormData::service)
-                    addValueChangeListener { onServiceSelected(it) }
+                    addValueChangeListener { onServiceChanged(it) }
                 }
                 actionSelect = aComboBox(getTranslation("lbl.action"), emptyList(),1) {
                     bind(binder).bind(SearchFilterFormData::action)
-                    addValueChangeListener { onActionSelected(it) }
+                    addValueChangeListener { onActionChanged(it) }
                 }
                 aTextField(getTranslation("lbl.conversationId"), 1) {
                     bind(binder).bind(SearchFilterFormData::conversationId)
@@ -90,21 +90,8 @@ class SearchFilter(
                         val formData = SearchFilterFormData()
                         if (binder.writeBeanIfValid(formData)) {
                             try {
-                                with(messageFilter) {
-                                    cpaId = formData.cpaId
-                                    fromParty = formData.fromPartyId?.let { Party(it, formData.fromRole) }
-                                    toParty = formData.toPartyId?.let { Party(it, formData.fromRole) }
-                                    service = formData.service
-                                    action = formData.action
-                                    conversationId = formData.conversationId
-                                    messageId = formData.messageId
-                                    refToMessageId = formData.refToMessageId
-                                    statuses = formData.status
-                                    from = formData.fromDate
-                                    to = formData.toDate
-                                }
+                                formData.toMessageFilter(messageFilter)
                                 refresh()
-//                                showSuccessNotification(getTranslation("search.ok"))
                             } catch (e: EbMSMessageServiceException) {
                                 logger.error("", e)
                                 showErrorNotification(e.message)
@@ -115,13 +102,15 @@ class SearchFilter(
                     }
                 }
                 resetButton(getTranslation("cmd.reset")) {
-                    binder.readBean(SearchFilterFormData())
+                    val formData = SearchFilterFormData()
+                    binder.readBean(formData)
+                    formData.toMessageFilter(messageFilter)
                     refresh()
                 }
             }
         }
 
-    private fun onCpaIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+    private fun onCpaIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
         e.value?.let {
             fromPartyIdSelect.isEnabled = true
             fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(it)))
@@ -131,8 +120,6 @@ class SearchFilter(
             fromPartyIdSelect.disable()
             toPartyIdSelect.disable()
         }
-        onFromPartyIdSelected(null)
-        onToPartyIdSelected(null)
     }
 
     private fun getCpa(cpaId: String) =
@@ -140,26 +127,27 @@ class SearchFilter(
             .handleUnsafe(ebMSAdminDAO.findCPA(cpaId)?.cpa)
 
     private fun ComboBox<*>.disable() {
+        value = null
         setItems(emptyList())
         isEnabled = false
     }
 
-    private fun onFromPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
+    private fun onFromPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
             fromRoleSelect.isEnabled = true
             fromRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
             toPartyIdSelect.disable()
-
         } ?: run {
             fromRoleSelect.disable()
-            toPartyIdSelect.isEnabled = true
-            toPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+            cpaIdSelect.value?.let {
+                toPartyIdSelect.isEnabled = true
+                toPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+            }
         }
-        onFromRoleSelected(null)
     }
 
-    private fun onFromRoleSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
+    private fun onFromRoleChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
             serviceSelect.isEnabled = true
             serviceSelect.setItems(
                 CPAUtils.getServiceNamesCanSend(
@@ -168,24 +156,24 @@ class SearchFilter(
                     fromRoleSelect.value
                 ))
         } ?: serviceSelect.disable()
-        onServiceSelected(null)
     }
 
-    private fun onToPartyIdSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
+    private fun onToPartyIdChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
             toRoleSelect.isEnabled = true
             toRoleSelect.setItems(CPAUtils.getRoleNames(getCpa(cpaIdSelect.value), it))
             fromPartyIdSelect.disable()
         } ?: run {
             toRoleSelect.disable()
-            fromPartyIdSelect.isEnabled = true
-            fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+            cpaIdSelect.value?.let {
+                fromPartyIdSelect.isEnabled = true
+                fromPartyIdSelect.setItems(CPAUtils.getPartyIds(getCpa(cpaIdSelect.value)))
+            }
         }
-        onToRoleSelected(null)
     }
 
-    private fun onToRoleSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
+    private fun onToRoleChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
             serviceSelect.isEnabled = true
             serviceSelect.setItems(
                 CPAUtils.getServiceNamesCanReceive(
@@ -194,11 +182,10 @@ class SearchFilter(
                     toRoleSelect.value
                 ))
         } ?: serviceSelect.disable()
-        onServiceSelected(null)
     }
 
-    private fun onServiceSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
-        e?.value?.let {
+    private fun onServiceChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
+        e.value?.let {
             actionSelect.isEnabled = true
             actionSelect.setItems(
                 fromRoleSelect.value?.let {
@@ -214,10 +201,9 @@ class SearchFilter(
                     serviceSelect.value
             ))
         } ?: actionSelect.disable()
-        onActionSelected(null)
     }
 
-    private fun onActionSelected(e: ComponentValueChangeEvent<ComboBox<String>, String>?) {
+    private fun onActionChanged(e: ComponentValueChangeEvent<ComboBox<String>, String>) {
 //        submitButton.isEnabled = e?.value != null
     }
 
@@ -253,7 +239,7 @@ class SearchFilter(
     ): ValueChangeListener<in ComponentValueChangeEvent<ComboBox<String>, String>> {
         return ValueChangeListener {
             try {
-                val value = cpaComboBox.value?.let { ebMSAdminDAO?.findCPA(cpaComboBox.value!!) }
+                val value = cpaComboBox.value?.let { ebMSAdminDAO.findCPA(cpaComboBox.value!!) }
                 val cpa: CollaborationProtocolAgreement? =
                     value?.let { JAXBParser.getInstance(CollaborationProtocolAgreement::class.java).handleUnsafe(value.cpa) }
                 fromPartySelect.updateState(cpa)
@@ -283,4 +269,37 @@ data class SearchFilterFormData(
     var status: Set<EbMSMessageStatus> = emptySet(),
     var fromDate: LocalDateTime? = null,
     var toDate: LocalDateTime? = null,
-)
+) {
+    fun toMessageFilter(filter: EbMSMessageFilter) {
+        filter.cpaId = cpaId
+        filter.fromParty = fromPartyId?.let { Party(it, fromRole) }
+        filter.toParty = toPartyId?.let { Party(it, fromRole) }
+        filter.service = service
+        filter.action = action
+        filter.conversationId = conversationId
+        filter.messageId = messageId
+        filter.refToMessageId = refToMessageId
+        filter.statuses = status
+        filter.from = fromDate
+        filter.to = toDate
+    }
+
+    companion object {
+        operator fun invoke(messageFilter: EbMSMessageFilter) =
+            SearchFilterFormData(
+                cpaId = messageFilter.cpaId,
+                fromPartyId = messageFilter.fromParty?.partyId,
+                fromRole = messageFilter.fromParty?.role,
+                toPartyId = messageFilter.toParty?.partyId,
+                toRole = messageFilter.toParty?.role,
+                service = messageFilter.service,
+                action = messageFilter.action,
+                conversationId = messageFilter.conversationId,
+                messageId = messageFilter.messageId,
+                refToMessageId = messageFilter.refToMessageId,
+                status = messageFilter.statuses,
+                fromDate = messageFilter.from,
+                toDate = messageFilter.to
+            )
+    }
+}

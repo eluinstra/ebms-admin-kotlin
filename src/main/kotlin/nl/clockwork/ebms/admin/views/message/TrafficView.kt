@@ -62,7 +62,6 @@ class TrafficView : KComposite(), WithBean, WithDate {
             content {
                 add(SearchFilter(messageFilter) {
                     dataProvider.refreshAll()
-                    //TODO grid refresh
                     this@details.isOpened = false
                 })
             }
