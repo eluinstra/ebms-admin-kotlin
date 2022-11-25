@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import io.mateo.cxf.codegen.wsdl2java.Wsdl2Java
 
 plugins {
-	id("org.springframework.boot") version "2.6.3"
+	id("org.springframework.boot") version "2.7.6"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	id("com.vaadin") version "23.0.0"
-	kotlin("jvm") version "1.6.10"
-	kotlin("plugin.spring") version "1.6.10"
+	id("com.vaadin") version "23.2.9"
+	kotlin("jvm") version "1.7.21"
+	kotlin("plugin.spring") version "1.7.21"
 	id("io.mateo.cxf-codegen") version "1.0.0"
 }
 
@@ -39,10 +39,10 @@ dependencies {
 	implementation("org.jetbrains.exposed:exposed-java-time:0.37.3")
 	implementation("com.vaadin:vaadin-spring-boot-starter")
 	implementation("org.apache.commons:commons-csv:1.9.0")
-	implementation("org.apache.cxf:cxf-core:3.5.0")
-	implementation("org.apache.cxf:cxf-rt-frontend-jaxws:3.5.0")
-	implementation("org.apache.cxf:cxf-rt-transports-http:3.5.0")
-	implementation("nl.clockwork.ebms:ebms-core:2.18.5") {
+	implementation("org.apache.cxf:cxf-core:3.5.4")
+	implementation("org.apache.cxf:cxf-rt-frontend-jaxws:3.5.4")
+	implementation("org.apache.cxf:cxf-rt-transports-http:3.5.4")
+	implementation("nl.clockwork.ebms:ebms-core:2.19.0") {
 		exclude("org.springframework")
 		exclude("org.springframework.kafka")
 		exclude("org.codehaus.btm")
@@ -51,9 +51,9 @@ dependencies {
 	}
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("com.github.mvysny.karibudsl:karibu-dsl:1.1.1")
+	implementation("com.github.mvysny.karibudsl:karibu-dsl:1.1.3")
 	implementation("com.github.appreciated:apexcharts:2.0.0-beta13")
-	implementation("org.postgresql:postgresql:42.3.3")
+	implementation("org.postgresql:postgresql:42.5.0")
 	cxfCodegen("jakarta.xml.ws:jakarta.xml.ws-api:2.3.3")
 	cxfCodegen("jakarta.annotation:jakarta.annotation-api:1.3.5")
 	implementation("javax.jws:javax.jws-api:1.1")
@@ -63,7 +63,7 @@ dependencies {
 
 dependencyManagement {
 	imports {
-		mavenBom("com.vaadin:vaadin-bom:23.0.0")
+		mavenBom("com.vaadin:vaadin-bom:23.2.9")
 	}
 }
 
