@@ -23,7 +23,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 
-abstract class AbstractEbMSDAO : EbMSDAO {
+class EbMSDAOImpl : EbMSDAO {
     @Transactional("springTransactionManager")
     override fun findCPA(cpaId: String): Cpa? =
         Cpas.select { Cpas.cpaId eq cpaId }
@@ -52,12 +52,6 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             .map { message(it) }
             .firstOrNull()
 
-    @Transactional("springTransactionManager")
-    override fun findMessage(messageId: String, messageNr: Int): EbMSMessage? =
-        EbMSMessages.select { EbMSMessages.messageId eq messageId and (EbMSMessages.messageNr eq messageNr)}
-            .map { message(it) }
-            .firstOrNull()
-
     private fun message(row: ResultRow) =
         with(EbMSMessages) {
             EbMSMessage(
@@ -65,7 +59,6 @@ abstract class AbstractEbMSDAO : EbMSDAO {
                 cpaId = row[cpaId],
                 conversationId = row[conversationId],
                 messageId = row[messageId],
-                messageNr = row[messageNr],
                 refToMessageId = row[refToMessageId],
                 timeToLive = row[timeToLive],
                 fromPartyId = row[fromPartyId],
@@ -77,14 +70,14 @@ abstract class AbstractEbMSDAO : EbMSDAO {
                 content = row[content],
                 status = row[status]?.let { EbMSMessageStatus.get(it).orElse(null) },
                 statusTime = row[statusTime],
-                attachments = findAttachments(row[messageId].toString(), row[messageNr].toInt()),
+                attachments = findAttachments(row[messageId].toString()),
                 deliveryTask = findDeliveryTask(row[messageId]),
                 deliveryLogs = findDeliveryLogs(row[messageId])
             )
         }
 
-    protected open fun findAttachments(messageId: String, messageNr: Int) : List<EbMSAttachment> =
-        EbMSAttachments.select { EbMSAttachments.messageId eq messageId and (EbMSAttachments.messageNr eq messageNr) }
+    protected open fun findAttachments(messageId: String) : List<EbMSAttachment> =
+        EbMSAttachments.select { EbMSAttachments.messageId eq messageId }
             .map { attachment(it) }
 
     private fun cachedOutputStream(input: ByteArray): CachedOutputStream =
@@ -137,7 +130,6 @@ abstract class AbstractEbMSDAO : EbMSDAO {
     override fun existsResponseMessage(messageId: String): Boolean =
         EbMSMessages.select {
             EbMSMessages.refToMessageId eq messageId and
-                    (EbMSMessages.messageNr eq 0) and
                     (EbMSMessages.service eq EbMSAction.EBMS_SERVICE_URI)
         }.count() > 0
 
@@ -145,7 +137,6 @@ abstract class AbstractEbMSDAO : EbMSDAO {
     override fun findResponseMessage(messageId: String): EbMSMessage? =
         EbMSMessages.select {
             EbMSMessages.refToMessageId eq messageId and
-                    (EbMSMessages.messageNr eq 0) and
                     (EbMSMessages.service eq EbMSAction.EBMS_SERVICE_URI)
         }.map {
             message(it)
@@ -165,10 +156,9 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             .map { message(it) }
 
     @Transactional("springTransactionManager")
-    override fun findAttachment(messageId: String, messageNr: Int, contentId: String): EbMSAttachment? =
+    override fun findAttachment(messageId: String, contentId: String): EbMSAttachment? =
         EbMSAttachments.select {
             EbMSAttachments.messageId eq messageId and
-                    (EbMSAttachments.messageNr eq messageNr) and
                     (EbMSAttachments.contentId eq  contentId)
         }.map {
             attachment(it)
@@ -234,7 +224,6 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             .forEach {
                 with(EbMSMessages) {
                     printer.print(it[messageId])
-                    printer.print(it[messageNr])
                     printer.print(it[refToMessageId])
                     printer.print(it[conversationId])
                     printer.print(it[timestamp])
@@ -252,10 +241,10 @@ abstract class AbstractEbMSDAO : EbMSDAO {
     }
 
     @Transactional("springTransactionManager")
-    override fun writeMessageToZip(messageId: String, messageNr: Int, zip: ZipOutputStream) =
+    override fun writeMessageToZip(messageId: String, zip: ZipOutputStream) =
         EbMSMessages
             .slice(EbMSMessages.content)
-            .select { EbMSMessages.messageId eq messageId and (EbMSMessages.messageNr eq messageNr) }
+            .select { EbMSMessages.messageId eq messageId }
             .forEach { writeMessageContent(it, zip) }
 
     protected fun writeMessageContent(row: ResultRow, zip: ZipOutputStream) {
@@ -265,7 +254,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
         zip.closeEntry()
     }
 
-    protected open fun writeAttachmentsToZip(messageId: String, messageNr: Int, zip: ZipOutputStream) {
+    protected open fun writeAttachmentsToZip(messageId: String, zip: ZipOutputStream) {
         fun fileExtension(contentType: String) =
             "." + (if (contentType.contains("text")) "txt" else contentType.split("/")[1])
 
@@ -283,7 +272,7 @@ abstract class AbstractEbMSDAO : EbMSDAO {
             zip.closeEntry()
         }
 
-        return EbMSAttachments.select { EbMSAttachments.messageId eq messageId and (EbMSAttachments.messageNr eq messageNr) }
+        return EbMSAttachments.select { EbMSAttachments.messageId eq messageId }
             .forEach { writeAttachment(it, zip) }
     }
 
@@ -291,7 +280,6 @@ abstract class AbstractEbMSDAO : EbMSDAO {
         private fun messageFilter(filter: EbMSMessageFilter, condition: Op<Boolean>) : Op<Boolean> =
             with(EbMSMessages) {
                 var result = applyFilter(filter, condition)
-                result = filter.messageNr?.let { result.and { messageNr eq it } } ?: result
                 result = if (filter.statuses.isNotEmpty()) result.and { status inList filter.statuses.map { it.id } } else result
                 result = filter.serviceMessage?.let {
                     if (it) result.and { service eq EbMSAction.EBMS_SERVICE_URI }

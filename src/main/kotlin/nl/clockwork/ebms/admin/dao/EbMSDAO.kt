@@ -18,12 +18,11 @@ interface EbMSDAO {
     fun selectCPAs(first: Long, count: Int): List<Cpa>
 
     fun findMessage(messageId: String): EbMSMessage?
-    fun findMessage(messageId: String, messageNr: Int): EbMSMessage?
     fun existsResponseMessage(messageId: String): Boolean
     fun findResponseMessage(messageId: String): EbMSMessage?
     fun countMessages(filter: EbMSMessageFilter): Long
     fun selectMessages(filter: EbMSMessageFilter, first: Long, count: Int): List<EbMSMessage>
-    fun findAttachment(messageId: String, messageNr: Int, contentId: String): EbMSAttachment?
+    fun findAttachment(messageId: String, contentId: String): EbMSAttachment?
     fun selectMessageIds(
         cpaId: String,
         fromRole: String,
@@ -38,6 +37,6 @@ interface EbMSDAO {
         vararg status: EbMSMessageStatus
     ): Map<Int, Int>
 
-    fun writeMessageToZip(messageId: String, messageNr: Int, zip: ZipOutputStream)
+    fun writeMessageToZip(messageId: String, zip: ZipOutputStream)
     fun printMessagesToCSV(printer: CSVPrinter, filter: EbMSMessageFilter)
 }

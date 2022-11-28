@@ -29,7 +29,6 @@ class TrafficView : KComposite(), WithBean, WithDate {
             setSizeFull()
             h2(getTranslation("traffic"))
             val messageFilter = EbMSMessageFilter(
-                messageNr = 0,
                 serviceMessage = false
             )
             val dataProvider = messageDataProvider(messageFilter)

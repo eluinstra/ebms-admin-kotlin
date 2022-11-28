@@ -15,6 +15,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 	maven {
 		url = uri("https://maven.vaadin.com/vaadin-addons")
@@ -35,14 +36,14 @@ sourceSets {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-web-services")
-	implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.37.3")
-	implementation("org.jetbrains.exposed:exposed-java-time:0.37.3")
+	implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.40.1")
+	implementation("org.jetbrains.exposed:exposed-java-time:0.40.1")
 	implementation("com.vaadin:vaadin-spring-boot-starter")
 	implementation("org.apache.commons:commons-csv:1.9.0")
 	implementation("org.apache.cxf:cxf-core:3.5.4")
 	implementation("org.apache.cxf:cxf-rt-frontend-jaxws:3.5.4")
 	implementation("org.apache.cxf:cxf-rt-transports-http:3.5.4")
-	implementation("nl.clockwork.ebms:ebms-core:2.19.0") {
+	implementation("nl.clockwork.ebms:ebms-core:2.19.0-SNAPSHOT") {
 		exclude("org.springframework")
 		exclude("org.springframework.kafka")
 		exclude("org.codehaus.btm")

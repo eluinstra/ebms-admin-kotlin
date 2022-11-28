@@ -30,7 +30,6 @@ class MessageForm(message: EbMSMessage) : FormLayout() {
 private fun FormLayout.messageFields(message: EbMSMessage) {
     with(message) {
         addFormItem(span(messageId), getTranslation("lbl.messageId"))
-        addFormItem(span(messageNr.toString()), getTranslation("lbl.messageNr"))
         addFormItem(span(conversationId), getTranslation("lbl.conversationId"))
         addFormItem(span(refToMessageId), getTranslation("lbl.refToMessageId"))
         addFormItem(span(timestamp.toString()), getTranslation("lbl.timestamp"))

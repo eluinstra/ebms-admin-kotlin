@@ -32,7 +32,6 @@ object EbMSMessages : Table("ebms_message") {
     val cpaId: Column<String> = varchar("cpa_id", 256)
     val conversationId: Column<String> = varchar("conversation_id", 256)
     val messageId: Column<String> = varchar("message_id", 256)
-    val messageNr: Column<Int> = integer("message_nr")
     val refToMessageId: Column<String?> = varchar("ref_to_message_id", 256).nullable()
     val timeToLive: Column<Instant?> = timestamp("time_to_live").nullable()
     val persistTime: Column<Instant> = timestamp("persist_time")
@@ -45,7 +44,7 @@ object EbMSMessages : Table("ebms_message") {
     val content: Column<String?> = text("content").nullable()
     val status: Column<Int?> = integer("status").nullable()
     val statusTime: Column<Instant?> = timestamp("status_time").nullable()
-    override val primaryKey = PrimaryKey(messageId, messageNr)
+    override val primaryKey = PrimaryKey(messageId)
 }
 
 object EbMSMessagesX : Table("ebms_message") {
@@ -54,7 +53,6 @@ object EbMSMessagesX : Table("ebms_message") {
     val cpaId: Column<String> = varchar("cpa_id", 256)
     val conversationId: Column<String> = varchar("conversation_id", 256)
     val messageId: Column<String> = varchar("message_id", 256)
-    val messageNr: Column<Int> = integer("message_nr")
     val refToMessageId: Column<String?> = varchar("ref_to_message_id", 256).nullable()
     val timeToLive: Column<Instant?> = timestamp("time_to_live").nullable()
     val persistTime: Column<Instant> = timestamp("persist_time")
@@ -72,7 +70,6 @@ object EbMSMessagesX : Table("ebms_message") {
 
 object EbMSAttachments : Table("ebms_attachment") {
     val messageId: Column<String> = varchar("message_id", 256)
-    val messageNr: Column<Int> = integer("message_nr")
     val orderNr: Column<Int> = integer("order_nr")
     val name: Column<String?> = varchar("name", 256).nullable()
     val contentId: Column<String> = varchar("content_id", 256)

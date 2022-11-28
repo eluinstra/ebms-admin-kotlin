@@ -15,7 +15,6 @@ data class EbMSMessage(
     val cpaId: String,
     val conversationId: String,
     val messageId: String,
-    val messageNr: Int,
     val refToMessageId: String?,
     val timeToLive: Instant?,
     val fromPartyId: String,
@@ -53,7 +52,6 @@ data class DeliveryLog(
 )
 
 class EbMSMessageFilter(
-    var messageNr: Int? = null,
     var serviceMessage: Boolean? = null,
     var statuses: Set<EbMSMessageStatus> = emptySet(),
     var from: LocalDateTime? = null,

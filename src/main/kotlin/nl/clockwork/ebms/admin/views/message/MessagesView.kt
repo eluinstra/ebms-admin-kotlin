@@ -87,11 +87,6 @@ class MessagesView : KComposite(), WithBean, WithDate {
                 isAutoWidth = true
                 isFrozen = true
             }
-            addColumn("messageNr").apply {
-                setHeader(getTranslation("lbl.messageNr"))
-                isAutoWidth = true
-                textAlign = ColumnTextAlign.END
-            }
             addColumn("conversationId").apply {
                 setHeader(getTranslation("lbl.conversationId"))
                 isAutoWidth = true
